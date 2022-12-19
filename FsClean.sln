@@ -3,6 +3,18 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{3E860F15-4A9C-4869-A34D-7AE7528E8AAF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "core", "core", "{686A88FA-F8CF-4751-9E69-CCE6E8F904AA}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsClean.Preamble", "src\core\FsClean.Preamble\FsClean.Preamble.fsproj", "{D3ABD228-1878-40FD-B34B-940FF5A14657}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{70641318-3005-4F01-AA52-49F2F42F16C8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "todos", "todos", "{8A2F3FEA-EB02-438F-A8ED-7CAA89BD49A6}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Todos.Domain", "samples\todos\Todos.Domain\Todos.Domain.fsproj", "{B662548C-8A6C-4972-904C-D1D2C204CF1A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -10,5 +22,21 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D3ABD228-1878-40FD-B34B-940FF5A14657}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3ABD228-1878-40FD-B34B-940FF5A14657}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3ABD228-1878-40FD-B34B-940FF5A14657}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3ABD228-1878-40FD-B34B-940FF5A14657}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B662548C-8A6C-4972-904C-D1D2C204CF1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B662548C-8A6C-4972-904C-D1D2C204CF1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B662548C-8A6C-4972-904C-D1D2C204CF1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B662548C-8A6C-4972-904C-D1D2C204CF1A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{686A88FA-F8CF-4751-9E69-CCE6E8F904AA} = {3E860F15-4A9C-4869-A34D-7AE7528E8AAF}
+		{D3ABD228-1878-40FD-B34B-940FF5A14657} = {686A88FA-F8CF-4751-9E69-CCE6E8F904AA}
+		{8A2F3FEA-EB02-438F-A8ED-7CAA89BD49A6} = {70641318-3005-4F01-AA52-49F2F42F16C8}
+		{B662548C-8A6C-4972-904C-D1D2C204CF1A} = {8A2F3FEA-EB02-438F-A8ED-7CAA89BD49A6}
 	EndGlobalSection
 EndGlobal
