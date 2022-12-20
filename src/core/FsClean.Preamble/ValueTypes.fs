@@ -33,6 +33,7 @@ module LimitedString =
 
 [<RequireQualifiedAccess>]
 module EntityId =
+    open System.Text.RegularExpressions
 
     [<Literal>]
     let MinLength = 1
@@ -40,8 +41,28 @@ module EntityId =
     [<Literal>]
     let MaxLength = 64
 
+    let private checkPatternMessage =
+        sprintf "'%s' must be a valid identifier"
+
+    let PatternRegex =
+        new Regex("^[a-z0-9]+(-[a-z0-9]+)*$", RegexOptions.Compiled ||| RegexOptions.IgnoreCase)
+
+    let private checkPattern =
+        Validator.create checkPatternMessage (fun value -> PatternRegex.IsMatch(value: string))
+
     let create field value =
-        LimitedString.create MinLength MaxLength field value
+        validate {
+            let! value = LimitedString.create MinLength MaxLength field value
+            let! value = checkPattern field value
+            return value
+        }
 
     let createOptional field value =
-        LimitedString.createOptional MinLength MaxLength field value
+        validate {
+            let! value = LimitedString.createOptional MinLength MaxLength field value
+            match value with
+            | Some value ->
+                let! value = checkPattern field value
+                return Some value
+            | None -> return None
+        }

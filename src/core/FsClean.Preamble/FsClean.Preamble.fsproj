@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <Compile Include="String.fs" />
+    <Compile Include="Preamble.fs" />
     <Compile Include="DomainError.fs" />
     <Compile Include="ValueTypes.fs" />
   </ItemGroup>

@@ -8,7 +8,9 @@ open FsCheck.Xunit
 open Validus
 
 open FsClean
+open FsClean.ValueTypesTests
 open Todos.Domain.TodoList
+
 
 [<Property>]
 let ``TaskId.value should return the value`` value =
@@ -18,7 +20,7 @@ let ``TaskId.value should return the value`` value =
 [<Property>]
 let ``TaskId.create should return a validated TaskId`` value =
     TaskId.create value
-    |> ValueTypesTests.isValidEntityId TaskId Fields.TASK_ID value
+    |> EntityId.isValid TaskId Fields.TASK_ID value
 
 [<Property>]
 let ``TaskTitle.value should return the value`` value =
@@ -28,7 +30,7 @@ let ``TaskTitle.value should return the value`` value =
 [<Property>]
 let ``TaskTitle.create should return a validated TaskTitle`` value =
     TaskTitle.create value
-    |> ValueTypesTests.isValidLimitedString TaskTitle TaskTitle.MinLength TaskTitle.MaxLength Fields.TITLE value
+    |> LimitedString.isValid TaskTitle TaskTitle.MinLength TaskTitle.MaxLength Fields.TITLE value
 
 [<Property>]
 let ``TaskDueDate.value should return the value`` value =
