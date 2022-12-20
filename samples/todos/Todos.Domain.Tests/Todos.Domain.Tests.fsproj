@@ -8,7 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="ConstantsTests.fs" />
+    <Compile Include="TodoList\ConstantsTests.fs" />
+    <Compile Include="TodoList\ValueTypesTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
@@ -28,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\src\core\FsClean.Preamble.Tests\FsClean.Preamble.Tests.fsproj" />
     <ProjectReference Include="..\Todos.Domain\Todos.Domain.fsproj" />
   </ItemGroup>
 

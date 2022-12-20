@@ -1,4 +1,4 @@
-module ConstantsTests
+module Todos.Domain.TodoList.ConstantsTests
 
 open System
 open Xunit
@@ -37,16 +37,13 @@ let ``Operations.KEEP_TASK_OPEN should have proper value`` () =
     test <@ Operations.KEEP_TASK_OPEN = "keep_task_open" @>
 
 [<Fact>]
-let ``Fields.TASK_ID should have proper value`` () =
-    test <@ Fields.TASK_ID = "task_id" @>
+let ``Fields.TASK_ID should have proper value`` () = test <@ Fields.TASK_ID = "task_id" @>
 
 [<Fact>]
-let ``Fields.TITLE should have proper value`` () =
-    test <@ Fields.TITLE = "title" @>
+let ``Fields.TITLE should have proper value`` () = test <@ Fields.TITLE = "title" @>
 
 [<Fact>]
-let ``Fields.DUE_DATE should have proper value`` () =
-    test <@ Fields.DUE_DATE = "due_date" @>
+let ``Fields.DUE_DATE should have proper value`` () = test <@ Fields.DUE_DATE = "due_date" @>
 
 [<Fact>]
 let ``Fields.COMPLETED should have proper value`` () =
@@ -63,3 +60,34 @@ let ``Errors.TASK_ID_DOES_NOT_EXISTS should have proper value`` () =
 [<Fact>]
 let ``Errors.TASK_ALREADY_COMPLETED should have proper value`` () =
     test <@ Errors.TASK_ALREADY_COMPLETED = "todo_list.task_already_completed" @>
+
+[<Fact>]
+let ``Errors.TaskIdAlreadyExistsConflict should have proper values`` () =
+    let expected =
+        { DomainError.conflict with
+            code = Errors.TASK_ID_ALREADY_EXISTS
+            entity = Some TODO_LIST_ENTITY_NAME
+            description = "Task ID already exists" }
+
+    test <@ Errors.TaskIdAlreadyExistsConflict = expected @>
+
+[<Fact>]
+let ``Errors.TaskIdDoesNotExistsConflict should have proper values`` () =
+    let expected =
+        { DomainError.conflict with
+            code = Errors.TASK_ID_DOES_NOT_EXISTS
+            entity = Some TODO_LIST_ENTITY_NAME
+            description = "Task ID does not exists" }
+
+    test <@ Errors.TaskIdDoesNotExistsConflict = expected @>
+
+[<Fact>]
+let ``Errors.TaskAlreadyCompletedConflict should have proper values`` () =
+    let expected =
+        { DomainError.conflict with
+            code = Errors.TASK_ALREADY_COMPLETED
+            entity = Some TODO_LIST_ENTITY_NAME
+            description = "Task already completed" }
+
+    test <@ Errors.TaskAlreadyCompletedConflict = expected @>
+

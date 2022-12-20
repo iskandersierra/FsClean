@@ -4,64 +4,70 @@ open System
 open Validus
 
 type Command =
-    | AddTask of AddTask
-    | RemoveTask of RemoveTask
+    | AddTask of
+        {| taskId: TaskId
+           title: TaskTitle
+           dueDate: TaskDueDate option |}
+    | RemoveTask of {| taskId: TaskId |}
     | ClearAllTasks
-    | CompleteTask of CompleteTask
-    | PostponeTask of PostponeTask
-    | KeepTaskOpen of KeepTaskOpen
+    | CompleteTask of {| taskId: TaskId |}
+    | PostponeTask of
+        {| taskId: TaskId
+           dueDate: TaskDueDate |}
+    | KeepTaskOpen of {| taskId: TaskId |}
 
-and AddTask =
-    { taskId: TaskId
-      title: TaskTitle
-      dueDate: TaskDueDate option }
-    static member create taskId title dueDate =
+module Command =
+    type AddTaskDto =
+        { taskId: string
+          title: string
+          dueDate: DateTime option }
+
+    type RemoveTaskDto = { taskId: string }
+
+    type CompleteTaskDto = { taskId: string }
+
+    type PostponeTaskDto = { taskId: string; dueDate: DateTime }
+
+    type KeepTaskOpenDto = { taskId: string }
+
+    let createAddTask (dto: AddTaskDto) =
         validate {
-            let! taskId = TaskId.create taskId
-            and! title = TaskTitle.create title
+            let! taskId = TaskId.create dto.taskId
+            and! title = TaskTitle.create dto.title
 
             and! dueDate =
-                match dueDate with
+                match dto.dueDate with
                 | Some dueDate -> TaskDueDate.create dueDate |> Result.map Some
                 | None -> Ok None
 
             return
                 AddTask
-                    { taskId = taskId
-                      title = title
-                      dueDate = dueDate }
+                    {| taskId = taskId
+                       title = title
+                       dueDate = dueDate |}
         }
 
-and RemoveTask =
-    { taskId: TaskId }
-    static member create taskId =
+    let createRemoveTask (dto: RemoveTaskDto) =
         validate {
-            let! taskId = TaskId.create taskId
-            return RemoveTask { taskId = taskId }
+            let! taskId = TaskId.create dto.taskId
+            return RemoveTask {| taskId = taskId |}
         }
 
-and CompleteTask =
-    { taskId: TaskId }
-    static member create taskId =
+    let createCompleteTask (dto: CompleteTaskDto) =
         validate {
-            let! taskId = TaskId.create taskId
-            return CompleteTask { taskId = taskId }
+            let! taskId = TaskId.create dto.taskId
+            return CompleteTask {| taskId = taskId |}
         }
 
-and PostponeTask =
-    { taskId: TaskId
-      dueDate: TaskDueDate }
-    static member create taskId dueDate =
+    let createPostponeTask (dto: PostponeTaskDto) =
         validate {
-            let! taskId = TaskId.create taskId
-            and! dueDate = TaskDueDate.create dueDate
-            return PostponeTask { taskId = taskId; dueDate = dueDate }
+            let! taskId = TaskId.create dto.taskId
+            and! dueDate = TaskDueDate.create dto.dueDate
+            return PostponeTask {| taskId = taskId; dueDate = dueDate |}
         }
 
-and KeepTaskOpen =
-    { taskId: TaskId }
-    static member create taskId =
+    let createKeepTaskOpen (dto: KeepTaskOpenDto) =
         validate {
-            let! taskId = TaskId.create taskId
-            return KeepTaskOpen { taskId = taskId }
+            let! taskId = TaskId.create dto.taskId
+            return KeepTaskOpen {| taskId = taskId |}
         }

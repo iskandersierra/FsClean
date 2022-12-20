@@ -6,7 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="String.fs" />
     <Compile Include="DomainError.fs" />
+    <Compile Include="ValueTypes.fs" />
   </ItemGroup>
 
   <ItemGroup>
