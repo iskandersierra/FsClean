@@ -3,14 +3,27 @@
 open FsClean
 
 module Aggregate =
+    let private addTaskIdAlreadyExists =
+        Errors.TaskIdAlreadyExistsConflict
+        |> DomainError.setOperation Operations.ADD_TASK
+
+    let private completeTaskIdDoesNotExists =
+        Errors.TaskIdDoesNotExistsConflict
+        |> DomainError.setOperation Operations.COMPLETE_TASK
+
+    let private postponeTaskIdDoesNotExists =
+        Errors.TaskIdDoesNotExistsConflict
+        |> DomainError.setOperation Operations.POSTPONE_TASK
+
+    let private keepTaskOpenIdDoesNotExists =
+        Errors.TaskIdDoesNotExistsConflict
+        |> DomainError.setOperation Operations.KEEP_TASK_OPEN
+
     let execute state =
         function
         | AddTask command ->
             match state.tasks |> Map.tryFind command.taskId with
-            | Some _ ->
-                Errors.TaskIdAlreadyExistsConflict
-                |> DomainError.setSomeOperation Operations.ADD_TASK
-                |> Error
+            | Some _ -> addTaskIdAlreadyExists |> Error
             | None ->
                 let task: TaskAdded =
                     { taskId = command.taskId
@@ -40,10 +53,7 @@ module Aggregate =
 
             | Some _ -> Ok []
 
-            | None ->
-                Errors.TaskIdDoesNotExistsConflict
-                |> DomainError.setSomeOperation Operations.COMPLETE_TASK
-                |> Error
+            | None -> completeTaskIdDoesNotExists |> Error
 
         | PostponeTask command ->
             match state.tasks |> Map.tryFind command.taskId with
@@ -56,10 +66,7 @@ module Aggregate =
 
             | Some _ -> Ok []
 
-            | None ->
-                Errors.TaskIdDoesNotExistsConflict
-                |> DomainError.setSomeOperation Operations.POSTPONE_TASK
-                |> Error
+            | None -> postponeTaskIdDoesNotExists |> Error
 
         | KeepTaskOpen command ->
             match state.tasks |> Map.tryFind command.taskId with
@@ -72,7 +79,4 @@ module Aggregate =
 
             | Some _ -> Ok []
 
-            | None ->
-                Errors.TaskIdDoesNotExistsConflict
-                |> DomainError.setSomeOperation Operations.KEEP_TASK_OPEN
-                |> Error
+            | None -> keepTaskOpenIdDoesNotExists |> Error

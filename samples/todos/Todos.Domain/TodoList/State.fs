@@ -2,12 +2,12 @@
 
 open System
 
-type State = { tasks: Map<int, TaskState> }
+type State = { tasks: Map<TaskId, TaskState> }
 
 and TaskState =
-    { taskId: int
-      title: string
-      dueDate: DateTime option
+    { taskId: TaskId
+      title: TaskTitle
+      dueDate: TaskDueDate option
       completed: bool }
 
 module State =

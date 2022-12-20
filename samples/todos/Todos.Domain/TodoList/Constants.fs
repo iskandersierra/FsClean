@@ -2,7 +2,7 @@
 
 [<AutoOpen>]
 module TodoListEntity =
-    let ENTITY_NAME = "todo_list"
+    let TODO_LIST_ENTITY_NAME = "todo_list"
 
     module Operations =
         let ADD_TASK = "add_task"
@@ -20,24 +20,30 @@ module TodoListEntity =
 
     module Errors =
         open FsClean
-        let TASK_ID_ALREADY_EXISTS = $"{ENTITY_NAME}.task_id_already_exists"
-        let TASK_ID_DOES_NOT_EXISTS = $"{ENTITY_NAME}.task_id_does_not_exists"
-        let TASK_ALREADY_COMPLETED = $"{ENTITY_NAME}.task_already_completed"
+
+        let TASK_ID_ALREADY_EXISTS =
+            $"{TODO_LIST_ENTITY_NAME}.task_id_already_exists"
+
+        let TASK_ID_DOES_NOT_EXISTS =
+            $"{TODO_LIST_ENTITY_NAME}.task_id_does_not_exists"
+
+        let TASK_ALREADY_COMPLETED =
+            $"{TODO_LIST_ENTITY_NAME}.task_already_completed"
 
         let TaskIdAlreadyExistsConflict =
-            Map.empty
-            |> DomainError.conflict ENTITY_NAME
-            |> DomainError.setCode TASK_ID_ALREADY_EXISTS
-            |> DomainError.setDescription "Task ID already exists"
+            { DomainError.conflict with
+                code = TASK_ID_ALREADY_EXISTS
+                entity = Some TODO_LIST_ENTITY_NAME
+                description = "Task ID already exists" }
 
         let TaskIdDoesNotExistsConflict =
-            Map.empty
-            |> DomainError.conflict ENTITY_NAME
-            |> DomainError.setCode TASK_ID_DOES_NOT_EXISTS
-            |> DomainError.setDescription "Task ID does not exists"
+            { DomainError.conflict with
+                code = TASK_ID_DOES_NOT_EXISTS
+                entity = Some TODO_LIST_ENTITY_NAME
+                description = "Task ID does not exists" }
 
         let TaskAlreadyCompletedConflict =
-            Map.empty
-            |> DomainError.conflict ENTITY_NAME
-            |> DomainError.setCode TASK_ALREADY_COMPLETED
-            |> DomainError.setDescription "Task already completed"
+            { DomainError.conflict with
+                code = TASK_ALREADY_COMPLETED
+                entity = Some TODO_LIST_ENTITY_NAME
+                description = "Task already completed" }

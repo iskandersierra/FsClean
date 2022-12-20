@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <Compile Include="TodoList\Constants.fs" />
+    <Compile Include="TodoList\ValueTypes.fs" />
     <Compile Include="TodoList\Events.fs" />
     <Compile Include="TodoList\Commands.fs" />
     <Compile Include="TodoList\State.fs" />

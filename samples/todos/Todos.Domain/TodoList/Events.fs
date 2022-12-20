@@ -11,19 +11,19 @@ type Event =
     | TaskKeptOpen of TaskKeptOpen
 
 and TaskAdded =
-    { taskId: int
-      title: string
-      dueDate: DateTime option }
+    { taskId: TaskId
+      title: TaskTitle
+      dueDate: TaskDueDate option }
 
 and TaskRemoved =
-    { taskId: int }
+    { taskId: TaskId }
 
 and TaskCompleted =
-    { taskId: int }
+    { taskId: TaskId }
 
 and TaskPostponed =
-    { taskId: int
-      dueDate: DateTime }
+    { taskId: TaskId
+      dueDate: TaskDueDate }
 
 and TaskKeptOpen =
-    { taskId: int }
+    { taskId: TaskId }

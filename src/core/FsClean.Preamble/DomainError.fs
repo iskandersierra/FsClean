@@ -23,21 +23,27 @@ and ConflictErrorData = Map<string, string list>
 
 type DomainResult<'t> = Result<'t, DomainError>
 
+[<RequireQualifiedAccess>]
 module DomainError =
     let setCode code error = { error with code = code }
     let setDescription description error = { error with description = description }
-    let setService service error = { error with service = service }
-    let setSomeService service = setService (Some service)
-    let resetService = setService None
-    let setEntity entity error = { error with entity = entity }
-    let setSomeEntity entity = setEntity (Some entity)
-    let resetEntity = setEntity None
-    let setOperation operation error = { error with operation = operation }
-    let setSomeOperation operation = setOperation (Some operation)
-    let resetOperation = setOperation None
-    let setEntityId entityId error = { error with entityId = entityId }
-    let setSomeEntityId entityId = setEntityId (Some entityId)
-    let resetEntityId = setEntityId None
+
+    let setServiceOption service error = { error with service = service }
+    let setService service = setServiceOption (Some service)
+    let resetService = setServiceOption None
+
+    let setEntityOption entity error = { error with entity = entity }
+    let setEntity entity = setEntityOption (Some entity)
+    let resetEntity = setEntityOption None
+
+    let setOperationOption operation error = { error with operation = operation }
+    let setOperation operation = setOperationOption (Some operation)
+    let resetOperation = setOperationOption None
+
+    let setEntityIdOption entityId error = { error with entityId = entityId }
+    let setEntityId entityId = setEntityIdOption (Some entityId)
+    let resetEntityId = setEntityIdOption None
+
     let setErrorData errorData error = { error with errorData = errorData }
 
     let failure =
@@ -55,31 +61,26 @@ module DomainError =
             description = "An unexpected error occurred."
             errorData = Unexpected }
 
-    let notFound entity entityId =
+    let notFound =
         { failure with
             code = "General.NotFound"
             description = $"The requested entity was not found."
-            entity = Some entity
-            entityId = Some entityId
             errorData = NotFound }
 
-    let unauthorized entity =
+    let unauthorized =
         { failure with
             code = "General.Unauthorized"
             description = $"The requested operation is not authorized."
-            entity = Some entity
             errorData = Unauthorized }
 
-    let validation entity errors =
+    let validation =
         { failure with
             code = "General.Validation"
             description = $"The requested operation failed validation."
-            entity = Some entity
-            errorData = Validation errors }
+            errorData = Validation Map.empty }
 
-    let conflict entity errors =
+    let conflict =
         { failure with
             code = "General.Conflict"
             description = $"The requested operation failed due to a conflict."
-            entity = Some entity
-            errorData = Conflict errors }
+            errorData = Conflict Map.empty }
