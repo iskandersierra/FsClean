@@ -16,7 +16,7 @@ let internal testValidator validator =
 
 [<RequireQualifiedAccess>]
 module LimitedString =
-    let internal validateOptional minLength maxLength field =
+    let internal testValidateOptional minLength maxLength field =
         let outsideMsg =
             sprintf "'%s' must have between %d and %d characters" field minLength maxLength
 
@@ -29,9 +29,9 @@ module LimitedString =
                 | value -> return Some value
             }
 
-    let internal validate minLength maxLength field =
+    let internal testValidate minLength maxLength field =
         let validateOptional =
-            validateOptional minLength maxLength field
+            testValidateOptional minLength maxLength field
 
         let emptyMsg = sprintf "'%s' must not be empty" field
 
@@ -42,23 +42,43 @@ module LimitedString =
                 | Some value -> return value
             }
 
-    let isValidOptional fn minLength maxLength field =
+    let testIsValidOptional fn minLength maxLength field =
         testValidator (
-            validateOptional minLength maxLength field
+            testValidateOptional minLength maxLength field
             >> Result.map (Option.map fn)
         )
 
-    let isValid fn minLength maxLength field =
+    let testIsValid fn minLength maxLength field =
         testValidator (
-            validate minLength maxLength field
+            testValidate minLength maxLength field
             >> Result.map fn
         )
 
+    //let titleGenerator minLength maxLength =
+    //    let charGenerator = Gen.elements [
+    //        yield! seq { 'a'..'z' }
+    //        yield! seq { 'A'..'Z' }
+    //    ]
+
+    //    let wordGenerator length =
+    //        charGenerator
+    //        |> Gen.listOfLength length
+    //        |> Gen.map (fun chars -> String(Array.ofList chars))
+
+    //    //let generator size =
+            
+
+    //    Gen.sized (fun size ->
+    //        gen {
+    //            let! length = Gen.choose(max size minLength, min size maxLength)
+    //        }
+    //    )
+
 [<RequireQualifiedAccess>]
 module EntityId =
-    let internal validateOptional field =
+    let internal testValidateOptional field =
         let validateOptionalString =
-            LimitedString.validateOptional EntityId.MinLength EntityId.MaxLength field
+            LimitedString.testValidateOptional EntityId.MinLength EntityId.MaxLength field
 
         let validIdMsg =
             sprintf "'%s' must be a valid identifier" field
@@ -74,8 +94,8 @@ module EntityId =
                     | value -> return Some value
             }
 
-    let internal validate field =
-        let validateOptional = validateOptional field
+    let internal testValidate field =
+        let validateOptional = testValidateOptional field
 
         let emptyMsg = sprintf "'%s' must not be empty" field
 
@@ -86,21 +106,21 @@ module EntityId =
                 | Some value -> return value
             }
 
-    let isValidOptional fn field =
+    let testIsValidOptional fn field =
         testValidator (
-            validateOptional field
+            testValidateOptional field
             >> Result.map (Option.map fn)
         )
 
-    let isValid fn field =
-        testValidator (validate field >> Result.map fn)
+    let testIsValid fn field =
+        testValidator (testValidate field >> Result.map fn)
 
 [<Property>]
 let ``LimitedString.create MUST validate identifiers`` (PositiveInt minLength) (PositiveInt length) field value =
     let maxLength = minLength + length
 
     LimitedString.create minLength maxLength field value
-    |> LimitedString.isValid id minLength maxLength field value
+    |> LimitedString.testIsValid id minLength maxLength field value
 
 [<Property>]
 let ``LimitedString.createOptional MUST validate identifiers``
@@ -112,14 +132,14 @@ let ``LimitedString.createOptional MUST validate identifiers``
     let maxLength = minLength + length
 
     LimitedString.createOptional minLength maxLength field value
-    |> LimitedString.isValidOptional id minLength maxLength field value
+    |> LimitedString.testIsValidOptional id minLength maxLength field value
 
 [<Property>]
 let ``EntityId.create MUST validate identifiers`` field value =
     EntityId.create field value
-    |> EntityId.isValid id field value
+    |> EntityId.testIsValid id field value
 
-[<Property(Replay = "313269454, 297125315")>]
+[<Property>]
 let ``EntityId.createOptional MUST validate identifiers`` field value =
     EntityId.createOptional field value
-    |> EntityId.isValidOptional id field value
+    |> EntityId.testIsValidOptional id field value

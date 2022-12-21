@@ -1,4 +1,4 @@
-﻿module Todos.Domain.TodoList.ValueTypesTests
+﻿module Todos.Domain.TodoList.TodoListValueTypesTests
 
 open System
 open Xunit
@@ -20,7 +20,7 @@ let ``TaskId.value should return the value`` value =
 [<Property>]
 let ``TaskId.create should return a validated TaskId`` value =
     TaskId.create value
-    |> EntityId.isValid TaskId Fields.TASK_ID value
+    |> EntityId.testIsValid TaskId Fields.TASK_ID value
 
 [<Property>]
 let ``TaskTitle.value should return the value`` value =
@@ -30,7 +30,7 @@ let ``TaskTitle.value should return the value`` value =
 [<Property>]
 let ``TaskTitle.create should return a validated TaskTitle`` value =
     TaskTitle.create value
-    |> LimitedString.isValid TaskTitle TaskTitle.MinLength TaskTitle.MaxLength Fields.TITLE value
+    |> LimitedString.testIsValid TaskTitle TaskTitle.MinLength TaskTitle.MaxLength Fields.TITLE value
 
 [<Property>]
 let ``TaskDueDate.value should return the value`` value =

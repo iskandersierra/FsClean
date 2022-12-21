@@ -1,4 +1,4 @@
-module Todos.Domain.TodoList.ConstantsTests
+module Todos.Domain.TodoList.TodoListConstantsTests
 
 open System
 open Xunit

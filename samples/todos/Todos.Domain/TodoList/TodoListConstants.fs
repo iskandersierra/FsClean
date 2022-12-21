@@ -1,7 +1,7 @@
 ﻿namespace Todos.Domain.TodoList
 
 [<AutoOpen>]
-module TodoListEntity =
+module TodoListConstants =
     let TODO_LIST_ENTITY_NAME = "todo_list"
 
     module Operations =

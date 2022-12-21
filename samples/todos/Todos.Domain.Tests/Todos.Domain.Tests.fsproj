@@ -8,8 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="TodoList\ConstantsTests.fs" />
-    <Compile Include="TodoList\ValueTypesTests.fs" />
+    <Compile Include="TodoList\TodoListConstantsTests.fs" />
+    <Compile Include="TodoList\TodoListValueTypesTests.fs" />
+    <Compile Include="TodoList\TodoListCommandTests.fs" />
+    <Compile Include="TodoList\TodoListStateTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

@@ -2,7 +2,7 @@
 
 open System
 
-type State = { tasks: Map<TaskId, TaskState> }
+type TodoListState = { tasks: Map<TaskId, TaskState> }
 
 and TaskState =
     { taskId: TaskId
@@ -10,7 +10,7 @@ and TaskState =
       dueDate: TaskDueDate option
       completed: bool }
 
-module State =
+module TodoListState =
     let init = { tasks = Map.empty }
 
     let apply state =

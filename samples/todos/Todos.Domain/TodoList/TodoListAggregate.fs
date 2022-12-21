@@ -2,7 +2,7 @@
 
 open FsClean
 
-module Aggregate =
+module TodoListAggregate =
     let private addTaskIdAlreadyExists =
         Errors.TaskIdAlreadyExistsConflict
         |> DomainError.setOperation Operations.ADD_TASK
@@ -25,17 +25,17 @@ module Aggregate =
             match state.tasks |> Map.tryFind command.taskId with
             | Some _ -> addTaskIdAlreadyExists |> Error
             | None ->
-                let task: TaskAdded =
-                    { taskId = command.taskId
-                      title = command.title
-                      dueDate = command.dueDate }
+                let task =
+                    {| taskId = command.taskId
+                       title = command.title
+                       dueDate = command.dueDate |}
 
                 Ok [ TaskAdded task ]
 
         | RemoveTask command ->
             match state.tasks |> Map.tryFind command.taskId with
             | Some _ ->
-                let task: TaskRemoved = { taskId = command.taskId }
+                let task = {| taskId = command.taskId |}
                 Ok [ TaskRemoved task ]
 
             | None -> Ok []
@@ -48,7 +48,7 @@ module Aggregate =
         | CompleteTask command ->
             match state.tasks |> Map.tryFind command.taskId with
             | Some task when not task.completed ->
-                let task: TaskCompleted = { taskId = command.taskId }
+                let task = {| taskId = command.taskId |}
                 Ok [ TaskCompleted task ]
 
             | Some _ -> Ok []
@@ -58,9 +58,9 @@ module Aggregate =
         | PostponeTask command ->
             match state.tasks |> Map.tryFind command.taskId with
             | Some task when not task.completed ->
-                let task: TaskPostponed =
-                    { taskId = command.taskId
-                      dueDate = command.dueDate }
+                let task =
+                    {| taskId = command.taskId
+                       dueDate = command.dueDate |}
 
                 Ok [ TaskPostponed task ]
 
@@ -73,7 +73,7 @@ module Aggregate =
             | Some task when not task.completed ->
                 match task.dueDate with
                 | Some _ ->
-                    let task: TaskKeptOpen = { taskId = command.taskId }
+                    let task = {| taskId = command.taskId |}
                     Ok [ TaskKeptOpen task ]
                 | None -> Ok []
 

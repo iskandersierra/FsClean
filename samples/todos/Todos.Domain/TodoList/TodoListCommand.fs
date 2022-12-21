@@ -2,8 +2,9 @@
 
 open System
 open Validus
+open FsClean
 
-type Command =
+type TodoListCommand =
     | AddTask of
         {| taskId: TaskId
            title: TaskTitle
@@ -16,7 +17,7 @@ type Command =
            dueDate: TaskDueDate |}
     | KeepTaskOpen of {| taskId: TaskId |}
 
-module Command =
+module TodoListCommand =
     type AddTaskDto =
         { taskId: string
           title: string
@@ -34,11 +35,7 @@ module Command =
         validate {
             let! taskId = TaskId.create dto.taskId
             and! title = TaskTitle.create dto.title
-
-            and! dueDate =
-                match dto.dueDate with
-                | Some dueDate -> TaskDueDate.create dueDate |> Result.map Some
-                | None -> Ok None
+            and! dueDate = ValueTypes.createOptional TaskDueDate.create dto.dueDate
 
             return
                 AddTask

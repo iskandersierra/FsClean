@@ -6,12 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="TodoList\Constants.fs" />
-    <Compile Include="TodoList\ValueTypes.fs" />
-    <Compile Include="TodoList\Events.fs" />
-    <Compile Include="TodoList\Commands.fs" />
-    <Compile Include="TodoList\State.fs" />
-    <Compile Include="TodoList\Aggregate.fs" />
+    <Compile Include="TodoList\TodoListConstants.fs" />
+    <Compile Include="TodoList\TodoListValueTypes.fs" />
+    <Compile Include="TodoList\TodoListEvent.fs" />
+    <Compile Include="TodoList\TodoListCommand.fs" />
+    <Compile Include="TodoList\TodoListState.fs" />
+    <Compile Include="TodoList\TodoListAggregate.fs" />
   </ItemGroup>
 
   <ItemGroup>

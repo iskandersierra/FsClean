@@ -3,6 +3,13 @@ namespace FsClean
 open Validus
 
 [<RequireQualifiedAccess>]
+module ValueTypes =
+    let createOptional create =
+        function
+        | None -> Ok None
+        | Some value -> create value |> Result.map Some
+
+[<RequireQualifiedAccess>]
 module LimitedString =
     let private checkLenMessage minLength maxLength =
         let msg =
@@ -40,6 +47,8 @@ module EntityId =
 
     [<Literal>]
     let MaxLength = 64
+
+    let newGuid () = System.Guid.NewGuid().ToString("D")
 
     let private checkPatternMessage =
         sprintf "'%s' must be a valid identifier"
