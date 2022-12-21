@@ -12,6 +12,7 @@
     <Compile Include="TodoList\TodoListValueTypesTests.fs" />
     <Compile Include="TodoList\TodoListCommandTests.fs" />
     <Compile Include="TodoList\TodoListStateTests.fs" />
+    <Compile Include="TodoList\TodoListAggregateTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
