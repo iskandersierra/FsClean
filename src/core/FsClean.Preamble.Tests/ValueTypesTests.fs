@@ -8,6 +8,7 @@ open FsCheck.Xunit
 open Validus
 
 open FsClean
+open FsClean.String.Patterns
 
 let internal testValidator validator =
     fun value result ->
@@ -23,8 +24,8 @@ module LimitedString =
         fun value ->
             validate {
                 match String.trimOrNull value with
-                | StringIsNullOrEmpty _ -> return None
-                | StringHasLengthOutside minLength maxLength _ ->
+                | IsNullOrEmpty _ -> return None
+                | HasLengthOutside minLength maxLength _ ->
                     return! Error(ValidationErrors.create field [ outsideMsg ])
                 | value -> return Some value
             }
@@ -54,26 +55,6 @@ module LimitedString =
             >> Result.map fn
         )
 
-    //let titleGenerator minLength maxLength =
-    //    let charGenerator = Gen.elements [
-    //        yield! seq { 'a'..'z' }
-    //        yield! seq { 'A'..'Z' }
-    //    ]
-
-    //    let wordGenerator length =
-    //        charGenerator
-    //        |> Gen.listOfLength length
-    //        |> Gen.map (fun chars -> String(Array.ofList chars))
-
-    //    //let generator size =
-            
-
-    //    Gen.sized (fun size ->
-    //        gen {
-    //            let! length = Gen.choose(max size minLength, min size maxLength)
-    //        }
-    //    )
-
 [<RequireQualifiedAccess>]
 module EntityId =
     let internal testValidateOptional field =
@@ -87,11 +68,9 @@ module EntityId =
             validate {
                 match! validateOptionalString value with
                 | None -> return None
-                | Some value ->
-                    match value with
-                    | StringIsNotMatch EntityId.PatternRegex _ ->
-                        return! Error(ValidationErrors.create field [ validIdMsg ])
-                    | value -> return Some value
+                | Some (IsNotMatch EntityId.PatternRegex value) ->
+                    return! Error(ValidationErrors.create field [ validIdMsg ])
+                | Some value -> return Some value
             }
 
     let internal testValidate field =

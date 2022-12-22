@@ -36,16 +36,21 @@ module TaskDueDate =
         DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
 
     let value (TaskDueDate value) = value
-
-    let create value =
+    
+    let createWithNow now value =
+        let now = max now MinValue
+        let msg =
+            let now = (now: DateTime).ToString("yyyy-MM-dd")
+            $"must be greater than or equal to {now}"
         validate {
             let! value =
-                Check.WithMessage.DateTime.between
-                    MinValue
-                    DateTime.MaxValue
-                    (sprintf "'%s' must be greater than or equal to 1970-01-01")
+                Check.WithMessage.DateTime.greaterThanOrEqualTo
+                    now
+                    (fun field -> $"'{field}' {msg}")
                     Fields.DUE_DATE
                     value
 
             return TaskDueDate value
         }
+
+    let create value = createWithNow MinValue value
