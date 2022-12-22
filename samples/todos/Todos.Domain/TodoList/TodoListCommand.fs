@@ -2,7 +2,7 @@
 
 open System
 open Validus
-open FsClean
+open FsClean.Domain
 
 type TodoListCommand =
     | AddTask of

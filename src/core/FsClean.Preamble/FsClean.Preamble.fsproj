@@ -8,13 +8,6 @@
   <ItemGroup>
     <Compile Include="String.fs" />
     <Compile Include="Preamble.fs" />
-    <Compile Include="DomainError.fs" />
-    <Compile Include="ValueTypes.fs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="FsToolkit.ErrorHandling" Version="4.2.1" />
-    <PackageReference Include="Validus" Version="4.0.3" />
   </ItemGroup>
 
 </Project>

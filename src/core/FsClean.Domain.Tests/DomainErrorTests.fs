@@ -1,4 +1,4 @@
-module FsClean.DomainErrorTests
+module FsClean.Domain.DomainErrorTests
 
 open System
 open Xunit

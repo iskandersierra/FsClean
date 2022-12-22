@@ -1,4 +1,4 @@
-﻿namespace FsClean
+﻿namespace FsClean.Domain
 
 type DomainError =
     { code: string

@@ -1,4 +1,4 @@
-module FsClean.ValueTypesTests
+module FsClean.Domain.ValueTypesTests
 
 open System
 open Xunit

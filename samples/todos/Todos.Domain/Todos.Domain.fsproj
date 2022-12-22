@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\core\FsClean.Preamble\FsClean.Preamble.fsproj" />
+    <ProjectReference Include="..\..\..\src\core\FsClean.Domain\FsClean.Domain.fsproj" />
   </ItemGroup>
 
 </Project>

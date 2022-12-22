@@ -19,7 +19,7 @@ module TodoListConstants =
         let COMPLETED = "completed"
 
     module Errors =
-        open FsClean
+        open FsClean.Domain
 
         let TASK_ID_ALREADY_EXISTS =
             $"{TODO_LIST_ENTITY_NAME}.task_id_already_exists"

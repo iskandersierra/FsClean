@@ -1,5 +1,6 @@
-namespace FsClean
+namespace FsClean.Domain
 
+open FsClean
 open Validus
 
 [<RequireQualifiedAccess>]

@@ -7,8 +7,8 @@ open FsCheck
 open FsCheck.Xunit
 open Validus
 
-open FsClean
-open FsClean.ValueTypesTests
+open FsClean.Domain
+open FsClean.Domain.ValueTypesTests
 open Todos.Domain.TodoList
 
 [<Property>]

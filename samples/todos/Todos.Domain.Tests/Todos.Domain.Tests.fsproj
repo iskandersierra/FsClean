@@ -32,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\core\FsClean.Preamble.Tests\FsClean.Preamble.Tests.fsproj" />
+    <ProjectReference Include="..\..\..\src\core\FsClean.Domain.Tests\FsClean.Domain.Tests.fsproj" />
     <ProjectReference Include="..\Todos.Domain\Todos.Domain.fsproj" />
   </ItemGroup>
 

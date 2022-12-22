@@ -1,6 +1,6 @@
 ﻿namespace Todos.Domain.TodoList
 
-open FsClean
+open FsClean.Domain
 
 module TodoListAggregate =
     let addTaskIdAlreadyExists =

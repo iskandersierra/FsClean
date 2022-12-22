@@ -10,8 +10,6 @@
   <ItemGroup>
     <Compile Include="StringTests.fs" />
     <Compile Include="PreambleTests.fs" />
-    <Compile Include="DomainErrorTests.fs" />
-    <Compile Include="ValueTypesTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
