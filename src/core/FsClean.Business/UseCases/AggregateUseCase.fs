@@ -1,4 +1,4 @@
-﻿module FsClean.Business.AggregateUseCase
+﻿module FsClean.Business.UseCases.AggregateUseCase
 
 open System.Threading
 open System.Threading.Tasks

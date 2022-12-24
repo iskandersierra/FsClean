@@ -1,6 +1,6 @@
 ﻿module Todos.Business.TodoList.TodoListAggregateUseCase
 
-open FsClean.Business.AggregateUseCase
+open FsClean.Business.UseCases.AggregateUseCase
 
 open Todos.Domain.TodoList
 
