@@ -22,6 +22,7 @@ and ValidationErrorData = Map<string, string list>
 and ConflictErrorData = Map<string, string list>
 
 type DomainResult<'t> = Result<'t, DomainError>
+type DomainResult = DomainResult<unit>
 
 [<RequireQualifiedAccess>]
 module DomainError =

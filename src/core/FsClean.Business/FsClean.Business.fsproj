@@ -6,16 +6,16 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="DomainError.fs" />
-        <Compile Include="ValueTypes.fs" />
+        <Compile Include="AggregateUseCase.fs" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Validus" Version="4.0.3" />
+        <PackageReference Include="FsToolkit.ErrorHandling" Version="4.2.1" />
+        <PackageReference Include="FsToolkit.ErrorHandling.TaskResult" Version="4.2.1" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\FsClean.Preamble\FsClean.Preamble.fsproj" />
+        <ProjectReference Include="..\FsClean.Domain\FsClean.Domain.fsproj" />
     </ItemGroup>
 
 </Project>

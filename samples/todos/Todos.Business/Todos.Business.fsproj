@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="TodoList\TodoListAggregateUseCase.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\core\FsClean.Business\FsClean.Business.fsproj" />
+    <ProjectReference Include="..\Todos.Domain\Todos.Domain.fsproj" />
+  </ItemGroup>
+
+</Project>

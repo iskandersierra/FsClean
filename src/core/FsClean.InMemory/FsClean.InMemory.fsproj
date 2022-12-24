@@ -6,10 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Async.fs" />
-    <Compile Include="String.fs" />
-    <Compile Include="EqualityComparer.fs" />
-    <Compile Include="Preamble.fs" />
+    <Compile Include="InMemoryKeyValueStorage.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FsClean.Application\FsClean.Application.fsproj" />
   </ItemGroup>
 
 </Project>
