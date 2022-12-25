@@ -1,0 +1,5 @@
+name: fsclean
+
+services:
+- name: todos-webapi
+  project: samples/todos/Todos.WebApi/Todos.WebApi.fsproj

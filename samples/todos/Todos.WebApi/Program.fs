@@ -1,4 +1,7 @@
 namespace Todos.WebApi
+
+open Microsoft.OpenApi.Models
+
 #nowarn "20"
 open System
 open System.Collections.Generic
@@ -23,12 +26,20 @@ module Program =
         let builder = WebApplication.CreateBuilder(args)
 
         builder.Services.AddControllers()
+        builder.Services.AddRazorPages().AddRazorRuntimeCompilation()
+        builder.Services.AddSwaggerGen(fun options ->
+            let info = OpenApiInfo()
+            info.Title <- "Todos.WebApi"
+            info.Version <- "v1"
+            options.SwaggerDoc(info.Version, info))
 
         let app = builder.Build()
 
-
+        app.UseSwagger()
+        app.UseSwaggerUI()
         app.UseAuthorization()
         app.MapControllers()
+        app.MapRazorPages()
 
         app.Run()
 

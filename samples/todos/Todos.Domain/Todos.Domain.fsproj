@@ -1,21 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="TodoList\TodoListConstants.fs" />
-    <Compile Include="TodoList\TodoListValueTypes.fs" />
-    <Compile Include="TodoList\TodoListEvent.fs" />
-    <Compile Include="TodoList\TodoListCommand.fs" />
-    <Compile Include="TodoList\TodoListState.fs" />
-    <Compile Include="TodoList\TodoListAggregate.fs" />
-  </ItemGroup>
+    <ItemGroup>
+        <Compile Include="TodoList\TodoListConstants.fs" />
+        <Compile Include="TodoList\TodoListValueTypes.fs" />
+        <Compile Include="TodoList\TodoListEvent.fs" />
+        <Compile Include="TodoList\TodoListCommand.fs" />
+        <Compile Include="TodoList\TodoListState.fs" />
+        <Compile Include="TodoList\TodoListAggregate.fs" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\src\core\FsClean.Domain\FsClean.Domain.fsproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\src\core\FsClean.Domain\FsClean.Domain.fsproj" />
+    </ItemGroup>
 
 </Project>
