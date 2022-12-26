@@ -19,8 +19,13 @@ let ``TaskId.value should return the value`` value =
 
 [<Property>]
 let ``TaskId.create should return a validated TaskId`` value =
-    TaskId.create value
-    |> EntityId.testIsValid TaskId Fields.TASK_ID value
+    let actual = TaskId.create value
+    let expected =
+        validate {
+            let! value = Check.Int.greaterThan 0 Fields.TASK_ID value
+            return TaskId value
+        }
+    test <@ actual = expected @>
 
 [<Property>]
 let ``TaskTitle.value should return the value`` value =

@@ -50,26 +50,12 @@ let ``Fields.COMPLETED should have proper value`` () =
     test <@ Fields.COMPLETED = "completed" @>
 
 [<Fact>]
-let ``Errors.TASK_ID_ALREADY_EXISTS should have proper value`` () =
-    test <@ Errors.TASK_ID_ALREADY_EXISTS = "todo_list.task_id_already_exists" @>
-
-[<Fact>]
 let ``Errors.TASK_ID_DOES_NOT_EXISTS should have proper value`` () =
     test <@ Errors.TASK_ID_DOES_NOT_EXISTS = "todo_list.task_id_does_not_exists" @>
 
 [<Fact>]
 let ``Errors.TASK_ALREADY_COMPLETED should have proper value`` () =
     test <@ Errors.TASK_ALREADY_COMPLETED = "todo_list.task_already_completed" @>
-
-[<Fact>]
-let ``Errors.TaskIdAlreadyExistsConflict should have proper values`` () =
-    let expected =
-        { DomainError.conflict with
-            code = Errors.TASK_ID_ALREADY_EXISTS
-            entity = Some TODO_LIST_ENTITY_NAME
-            description = "Task ID already exists" }
-
-    test <@ Errors.TaskIdAlreadyExistsConflict = expected @>
 
 [<Fact>]
 let ``Errors.TaskIdDoesNotExistsConflict should have proper values`` () =

@@ -1,5 +1,7 @@
 ﻿namespace FsClean.Domain
 
+open Validus
+
 type DomainError =
     { code: string
       description: string
@@ -85,3 +87,15 @@ module DomainError =
             code = "General.Conflict"
             description = $"The requested operation failed due to a conflict."
             errorData = Conflict Map.empty }
+
+    let ofValidusValidationResult result : DomainResult<_> =
+        result
+        |> Result.mapError (fun e ->
+            { validation with
+                errorData = Validation (ValidationErrors.toMap e) })
+
+    let ofValidusConflictResult result : DomainResult<_> =
+        result
+        |> Result.mapError (fun e ->
+            { conflict with
+                errorData = Conflict (ValidationErrors.toMap e) })

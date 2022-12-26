@@ -21,20 +21,11 @@ module TodoListConstants =
     module Errors =
         open FsClean.Domain
 
-        let TASK_ID_ALREADY_EXISTS =
-            $"{TODO_LIST_ENTITY_NAME}.task_id_already_exists"
-
         let TASK_ID_DOES_NOT_EXISTS =
             $"{TODO_LIST_ENTITY_NAME}.task_id_does_not_exists"
 
         let TASK_ALREADY_COMPLETED =
             $"{TODO_LIST_ENTITY_NAME}.task_already_completed"
-
-        let TaskIdAlreadyExistsConflict =
-            { DomainError.conflict with
-                code = TASK_ID_ALREADY_EXISTS
-                entity = Some TODO_LIST_ENTITY_NAME
-                description = "Task ID already exists" }
 
         let TaskIdDoesNotExistsConflict =
             { DomainError.conflict with

@@ -1,0 +1,32 @@
+﻿syntax = "proto3";
+
+package fsclean.grpc;
+
+option csharp_namespace = "FsClean.Grpc";
+
+message DomainError {
+  string code = 1;
+  string description = 2;
+  string service = 3;
+  string entity = 4;
+  string operation = 5;
+  string entityId = 6;
+  oneof errorData {
+    bool failure = 7;
+    bool unexpected = 8;
+    bool notFound = 9;
+    bool unauthorized = 10;
+    ValidationErrorData validation = 11;
+    ValidationErrorData conflict = 12;
+  }
+}
+
+message ValidationErrorData {
+  repeated ValidationError errors = 1;
+
+}
+
+message ValidationError {
+  string field = 1;
+  repeated string messages = 2;
+}

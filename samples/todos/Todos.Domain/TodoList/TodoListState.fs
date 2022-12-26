@@ -54,3 +54,23 @@ module TodoListState =
                         state.tasks
                         |> Map.add event.taskId { todoTask with dueDate = None } }
             | None -> state
+
+    type TodoListStateDto =
+        { tasks: TaskStateDto list }
+
+    and TaskStateDto =
+        { taskId: int
+          title: string
+          dueDate: DateTime option
+          completed: bool }
+
+    let toDto (state: TodoListState) : TodoListStateDto =
+        { tasks =
+            state.tasks
+            |> Map.toList
+            |> List.map snd
+            |> List.map (fun task ->
+                { taskId = task.taskId |> TaskId.value
+                  title = task.title |> TaskTitle.value
+                  dueDate = task.dueDate |> Option.map TaskDueDate.value
+                  completed = task.completed }) }

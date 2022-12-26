@@ -51,7 +51,7 @@ let ``TodoListState.apply AllTasksCleared should return a state with empty tasks
 [<Property>]
 let ``TodoListState.apply TaskCompleted on non-existing task should return same state`` state =
     let state' =
-        TodoListState.apply state (TaskCompleted {| taskId = TaskId(EntityId.newGuid ()) |})
+        TodoListState.apply state (TaskCompleted {| taskId = TaskId(1234) |})
 
     test <@ state' = state @>
 
@@ -72,7 +72,7 @@ let ``TodoListState.apply TaskPostponed on non-existing task should return same 
         TodoListState.apply
             state
             (TaskPostponed
-                {| taskId = TaskId(EntityId.newGuid ())
+                {| taskId = TaskId(1234)
                    dueDate = dueDate |})
 
     test <@ state' = state @>
@@ -96,7 +96,7 @@ let ``TodoListState.apply TaskKeptOpen on non-existing task should return same s
     let state' =
         TodoListState.apply
             state
-            (TaskKeptOpen {| taskId = TaskId(EntityId.newGuid ()) |})
+            (TaskKeptOpen {| taskId = TaskId(1234) |})
 
     test <@ state' = state @>
 

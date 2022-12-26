@@ -12,36 +12,10 @@ open FsClean.Domain.ValueTypesTests
 open Todos.Domain.TodoList
 
 [<Fact>]
-let ``TodoListAggregate.execute on AddTask when taskId already exists should return error`` () =
-    let taskId = EntityId.newGuid ()
-
+let ``TodoListAggregate.execute on AddTask should return events`` () =
     let command =
         AddTask
-            {| taskId = TaskId taskId
-               title = TaskTitle "title"
-               dueDate = None |}
-
-    let state =
-        { tasks =
-            Map.ofSeq [ TaskId taskId,
-                        { taskId = TaskId taskId
-                          title = TaskTitle "title"
-                          dueDate = None
-                          completed = false } ] }
-
-    let result = TodoListAggregate.execute state command
-    let expected = TodoListAggregate.addTaskIdAlreadyExists
-    test <@ result = Error expected @>
-
-
-[<Fact>]
-let ``TodoListAggregate.execute on AddTask when task is new should return events`` () =
-    let taskId = EntityId.newGuid ()
-
-    let command =
-        AddTask
-            {| taskId = TaskId taskId
-               title = TaskTitle "title"
+            {| title = TaskTitle "title"
                dueDate = None |}
 
     let state = { tasks = Map.empty }
@@ -50,7 +24,7 @@ let ``TodoListAggregate.execute on AddTask when task is new should return events
 
     let expected =
         [ TaskAdded
-              {| taskId = TaskId taskId
+              {| taskId = TaskId 1
                  title = TaskTitle "title"
                  dueDate = None |} ]
 
@@ -58,7 +32,7 @@ let ``TodoListAggregate.execute on AddTask when task is new should return events
 
 [<Fact>]
 let ``TodoListAggregate.execute on RemoveTask when task exists should return events`` () =
-    let taskId = EntityId.newGuid ()
+    let taskId = 1234
 
     let command =
         RemoveTask
@@ -82,7 +56,7 @@ let ``TodoListAggregate.execute on RemoveTask when task exists should return eve
 
 [<Fact>]
 let ``TodoListAggregate.execute on RemoveTask when task does not exist should return no events`` () =
-    let taskId = EntityId.newGuid ()
+    let taskId = 1234
 
     let command =
         RemoveTask
@@ -96,7 +70,7 @@ let ``TodoListAggregate.execute on RemoveTask when task does not exist should re
 
 [<Fact>]
 let ``TodoListAggregate.execute on ClearAllTasks when tasks exist should return events`` () =
-    let taskId = EntityId.newGuid ()
+    let taskId = 1234
 
     let command = ClearAllTasks
 
@@ -126,7 +100,7 @@ let ``TodoListAggregate.execute on ClearAllTasks when tasks do not exist should 
 
 [<Fact>]
 let ``TodoListAggregate.execute on CompleteTask when task exists should return events`` () =
-    let taskId = EntityId.newGuid ()
+    let taskId = 1234
 
     let command =
         CompleteTask
@@ -150,7 +124,7 @@ let ``TodoListAggregate.execute on CompleteTask when task exists should return e
 
 [<Fact>]
 let ``TodoListAggregate.execute on CompleteTask when task is already completed should return no events`` () =
-    let taskId = EntityId.newGuid ()
+    let taskId = 1234
 
     let command =
         CompleteTask
@@ -170,7 +144,7 @@ let ``TodoListAggregate.execute on CompleteTask when task is already completed s
 
 [<Fact>]
 let ``TodoListAggregate.execute on CompleteTask when task does not exist should return error`` () =
-    let taskId = EntityId.newGuid ()
+    let taskId = 1234
 
     let command =
         CompleteTask
@@ -184,7 +158,7 @@ let ``TodoListAggregate.execute on CompleteTask when task does not exist should 
 
 [<Fact>]
 let ``TodoListAggregate.execute on PostponeTask when task exists should return events`` () =
-    let taskId = EntityId.newGuid ()
+    let taskId = 1234
 
     let newDate = DateTime.Now.AddDays 1.0
 
@@ -212,7 +186,7 @@ let ``TodoListAggregate.execute on PostponeTask when task exists should return e
 
 [<Fact>]
 let ``TodoListAggregate.execute on PostponeTask when dueDate is the same should return no events`` () =
-    let taskId = EntityId.newGuid ()
+    let taskId = 1234
 
     let newDate = DateTime.Now.AddDays 1.0
 
@@ -235,7 +209,7 @@ let ``TodoListAggregate.execute on PostponeTask when dueDate is the same should 
 
 [<Fact>]
 let ``TodoListAggregate.execute on PostponeTask when task is already completed should return no events`` () =
-    let taskId = EntityId.newGuid ()
+    let taskId = 1234
 
     let newDate = DateTime.Now.AddDays 1.0
 
@@ -258,7 +232,7 @@ let ``TodoListAggregate.execute on PostponeTask when task is already completed s
 
 [<Fact>]
 let ``TodoListAggregate.execute on PostponeTask when task does not exist should return error`` () =
-    let taskId = EntityId.newGuid ()
+    let taskId = 1234
 
     let newDate = DateTime.Now.AddDays 1.0
 
@@ -275,7 +249,7 @@ let ``TodoListAggregate.execute on PostponeTask when task does not exist should 
 
 [<Fact>]
 let ``TodoListAggregate.execute on KeepTaskOpen when task exists should return events`` () =
-    let taskId = EntityId.newGuid ()
+    let taskId = 1234
 
     let command =
         KeepTaskOpen
@@ -299,7 +273,7 @@ let ``TodoListAggregate.execute on KeepTaskOpen when task exists should return e
 
 [<Fact>]
 let ``TodoListAggregate.execute on KeepTaskOpen when task is already completed should return no events`` () =
-    let taskId = EntityId.newGuid ()
+    let taskId = 1234
 
     let command =
         KeepTaskOpen
@@ -319,7 +293,7 @@ let ``TodoListAggregate.execute on KeepTaskOpen when task is already completed s
 
 [<Fact>]
 let ``TodoListAggregate.execute on KeepTaskOpen when task does not exist should return error`` () =
-    let taskId = EntityId.newGuid ()
+    let taskId = 1234
 
     let command =
         KeepTaskOpen

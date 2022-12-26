@@ -1,12 +1,9 @@
 ﻿namespace Todos.Domain.TodoList
 
+open FsClean
 open FsClean.Domain
 
 module TodoListAggregate =
-    let addTaskIdAlreadyExists =
-        Errors.TaskIdAlreadyExistsConflict
-        |> DomainError.setOperation Operations.ADD_TASK
-
     let completeTaskIdDoesNotExists =
         Errors.TaskIdDoesNotExistsConflict
         |> DomainError.setOperation Operations.COMPLETE_TASK
@@ -22,21 +19,28 @@ module TodoListAggregate =
     let execute state =
         function
         | AddTask command ->
-            match state.tasks |> Map.tryFind command.taskId with
-            | Some _ -> addTaskIdAlreadyExists |> Error
-            | None ->
-                let task =
-                    {| taskId = command.taskId
+            let taskId =
+                state.tasks.Keys
+                |> Seq.tryMax
+                |> function
+                    | Some taskId -> TaskId.value taskId + 1 |> TaskId
+                    | None -> 1 |> TaskId
+
+            let taskAdded =
+                TaskAdded
+                    {| taskId = taskId
                        title = command.title
                        dueDate = command.dueDate |}
 
-                Ok [ TaskAdded task ]
+            Ok [ taskAdded ]
 
         | RemoveTask command ->
             match state.tasks |> Map.tryFind command.taskId with
             | Some _ ->
-                let task = {| taskId = command.taskId |}
-                Ok [ TaskRemoved task ]
+                let taskRemoved =
+                    TaskRemoved {| taskId = command.taskId |}
+
+                Ok [ taskRemoved ]
             | None -> Ok []
 
         | ClearAllTasks ->
@@ -47,8 +51,10 @@ module TodoListAggregate =
         | CompleteTask command ->
             match state.tasks |> Map.tryFind command.taskId with
             | Some task when not task.completed ->
-                let task = {| taskId = command.taskId |}
-                Ok [ TaskCompleted task ]
+                let taskCompleted =
+                    TaskCompleted {| taskId = command.taskId |}
+
+                Ok [ taskCompleted ]
             | Some _ -> Ok []
             | None -> completeTaskIdDoesNotExists |> Error
 
@@ -58,11 +64,12 @@ module TodoListAggregate =
                 if task.dueDate = Some command.dueDate then
                     Ok []
                 else
-                    let task =
-                        {| taskId = command.taskId
-                           dueDate = command.dueDate |}
+                    let taskPostponed =
+                        TaskPostponed
+                            {| taskId = command.taskId
+                               dueDate = command.dueDate |}
 
-                    Ok [ TaskPostponed task ]
+                    Ok [ taskPostponed ]
             | Some _ -> Ok []
             | None -> postponeTaskIdDoesNotExists |> Error
 
@@ -72,6 +79,8 @@ module TodoListAggregate =
                 if task.completed || task.dueDate = None then
                     Ok []
                 else
-                    let task = {| taskId = command.taskId |}
-                    Ok [ TaskKeptOpen task ]
+                    let taskKeptOpen =
+                        TaskKeptOpen {| taskId = command.taskId |}
+
+                    Ok [ taskKeptOpen ]
             | None -> keepTaskOpenIdDoesNotExists |> Error

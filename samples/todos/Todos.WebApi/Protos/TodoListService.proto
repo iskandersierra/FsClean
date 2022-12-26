@@ -1,0 +1,36 @@
+﻿syntax = "proto3";
+
+package todos.grpc.todolist;
+
+option csharp_namespace = "Todos.Grpc.TodoList";
+
+import "google/protobuf/timestamp.proto";
+import "Protos/DomainError.proto";
+
+service TodoListCommandService {
+  rpc AddTask (AddTaskRequest) returns (TodoListCommandReply) {}
+}
+
+message AddTaskRequest {
+  string title = 1;
+  google.protobuf.Timestamp dueDate = 2;
+}
+
+message TodoListCommandReply {
+  oneof result {
+    TodoList success = 1;
+    fsclean.grpc.DomainError error = 2;
+  }
+}
+
+message TodoList {
+  string todoListId = 1;
+  repeated TodoListTask tasks = 2;
+}
+
+message TodoListTask {
+  int32 taskId = 1;
+  string title = 2;
+  google.protobuf.Timestamp dueDate = 3;
+  bool completed = 4;
+}

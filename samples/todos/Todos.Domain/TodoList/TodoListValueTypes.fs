@@ -5,14 +5,16 @@ open Validus
 
 open FsClean.Domain
 
-type TaskId = TaskId of value: string
+type TaskId = TaskId of value: int
 
 module TaskId =
     let value (TaskId value) = value
 
     let create value =
-        EntityId.create Fields.TASK_ID value
-        |> Result.map TaskId
+        validate {
+            let! value = Check.Int.greaterThan 0 Fields.TASK_ID value
+            return TaskId value
+        }
 
 type TaskTitle = TaskTitle of value: string
 

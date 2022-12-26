@@ -1,6 +1,4 @@
 ﻿[<AutoOpen>]
 module FsClean.Preamble
 
-open System.Text.RegularExpressions
-
-// String active patterns
+let flip fn = fun x y -> fn y x

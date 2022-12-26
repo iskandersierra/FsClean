@@ -6,8 +6,7 @@ open FsClean.Domain
 
 type TodoListCommand =
     | AddTask of
-        {| taskId: TaskId
-           title: TaskTitle
+        {| title: TaskTitle
            dueDate: TaskDueDate option |}
     | RemoveTask of {| taskId: TaskId |}
     | ClearAllTasks
@@ -19,28 +18,25 @@ type TodoListCommand =
 
 module TodoListCommand =
     type AddTaskDto =
-        { taskId: string
-          title: string
+        { title: string
           dueDate: DateTime option }
 
-    type RemoveTaskDto = { taskId: string }
+    type RemoveTaskDto = { taskId: int }
 
-    type CompleteTaskDto = { taskId: string }
+    type CompleteTaskDto = { taskId: int }
 
-    type PostponeTaskDto = { taskId: string; dueDate: DateTime }
+    type PostponeTaskDto = { taskId: int; dueDate: DateTime }
 
-    type KeepTaskOpenDto = { taskId: string }
+    type KeepTaskOpenDto = { taskId: int }
 
     let createAddTask (dto: AddTaskDto) =
         validate {
-            let! taskId = TaskId.create dto.taskId
-            and! title = TaskTitle.create dto.title
+            let! title = TaskTitle.create dto.title
             and! dueDate = ValueTypes.createOptional TaskDueDate.create dto.dueDate
 
             return
                 AddTask
-                    {| taskId = taskId
-                       title = title
+                    {| title = title
                        dueDate = dueDate |}
         }
 

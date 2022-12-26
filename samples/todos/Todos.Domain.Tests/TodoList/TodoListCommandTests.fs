@@ -16,14 +16,12 @@ let ``TodoListCommand.createAddTask should validate the command`` dto =
     let result = TodoListCommand.createAddTask dto
     let expected =
         validate {
-            let! taskId = TaskId.create dto.taskId
-            and! title = TaskTitle.create dto.title
+            let! title = TaskTitle.create dto.title
             and! dueDate = ValueTypes.createOptional TaskDueDate.create dto.dueDate
 
             return
                 AddTask
-                    {| taskId = taskId
-                       title = title
+                    {| title = title
                        dueDate = dueDate |}
         }
     test <@ result = expected @>
