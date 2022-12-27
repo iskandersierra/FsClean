@@ -10,11 +10,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="FsToolkit.ErrorHandling" Version="4.2.1" />
-        <PackageReference Include="FsToolkit.ErrorHandling.TaskResult" Version="4.2.1" />
-    </ItemGroup>
-
-    <ItemGroup>
         <ProjectReference Include="..\FsClean.Domain\FsClean.Domain.fsproj" />
     </ItemGroup>
 

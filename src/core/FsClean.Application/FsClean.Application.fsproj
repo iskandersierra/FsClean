@@ -6,8 +6,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Serialization.fs" />
     <Compile Include="KeyValueStorage.fs" />
+    <Compile Include="EventSourcing.fs" />
     <Compile Include="AggregateController.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FSharp.Control.AsyncSeq" Version="3.2.1" />
   </ItemGroup>
 
   <ItemGroup>

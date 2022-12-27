@@ -8,4 +8,6 @@ let definition =
     { applyEvent = TodoListState.apply
       executeCommand = TodoListAggregate.execute }
 
-let create ct = createUseCase ct definition
+let create ct = create ct definition
+
+let createStateless = createStateless definition

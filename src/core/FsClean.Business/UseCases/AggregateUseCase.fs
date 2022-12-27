@@ -21,7 +21,7 @@ type Definition<'state, 'event, 'command> =
     { applyEvent: 'state -> 'event -> 'state
       executeCommand: 'state -> 'command -> DomainResult<'event list> }
 
-let createUseCase ct (definition: Definition<'state, 'event, 'command>) (options: Options<'state, 'event>) =
+let create ct definition options =
     taskResult {
         let! (initialState, initialEvents) = options.readState ct
 
@@ -44,3 +44,21 @@ let createUseCase ct (definition: Definition<'state, 'event, 'command>) (options
         return { execute = execute }
     }
 
+let createStateless definition options =
+    let execute ct command =
+        taskResult {
+            let! (initialState, initialEvents) = options.readState ct
+
+            let state =
+                initialEvents
+                |> Seq.fold definition.applyEvent initialState
+
+            let! events = definition.executeCommand state command
+
+            let state' =
+                events |> Seq.fold definition.applyEvent state
+
+            do! options.writeState ct state' events
+        }
+
+    { execute = execute }

@@ -1,8 +1,6 @@
 ﻿namespace Todos.WebApi.Controllers
 
 open System
-open System.Collections.Generic
-open System.Linq
 open System.Threading
 open System.Threading.Tasks
 open Microsoft.AspNetCore.Mvc
@@ -10,90 +8,15 @@ open Microsoft.Extensions.Logging
 
 open FsToolkit.ErrorHandling
 open Swashbuckle.AspNetCore.Annotations
-open Validus
 
 open FsClean.Domain
+open FsClean.Presenters.Rest
 
 open Todos.Domain.TodoList
 open Todos.Business.TodoList
 
-module RestApi =
-
-    let setProblemDetails (error: DomainError) (problem: #ProblemDetails) =
-        problem.Title <- error.code
-        problem.Detail <- error.description
-
-        match error.service with
-        | Some service -> problem.Extensions.["service"] <- service
-        | None -> ()
-
-        match error.entity with
-        | Some entity -> problem.Extensions.["entity"] <- entity
-        | None -> ()
-
-        match error.operation with
-        | Some operation -> problem.Extensions.["operation"] <- operation
-        | None -> ()
-
-        match error.entityId with
-        | Some entityId -> problem.Extensions.["entityId"] <- entityId
-        | None -> ()
-
-        problem
-
-    let problemDetails (error: DomainError) =
-        new ProblemDetails() |> setProblemDetails error
-
-    let validationProblemDetails (error: DomainError) =
-        new ValidationProblemDetails()
-        |> setProblemDetails error
-
-    let toActionResult (result: Task<DomainResult<'a>>) =
-        task {
-            match! result with
-            | Ok result -> return OkObjectResult(result) :> IActionResult
-            | Error error ->
-                match error.errorData with
-                | Failure ->
-                    let problem = problemDetails error
-                    problem.Status <- 500
-                    let result = ObjectResult(problem)
-                    result.StatusCode <- 500
-                    return result
-                | Unexpected ->
-                    let problem = problemDetails error
-                    problem.Status <- 500
-                    let result = ObjectResult(problem)
-                    result.StatusCode <- 500
-                    return result
-                | NotFound ->
-                    let problem = problemDetails error
-                    problem.Status <- 404
-                    return NotFoundObjectResult(problem)
-                | Unauthorized ->
-                    let problem = problemDetails error
-                    problem.Status <- 401
-                    return UnauthorizedObjectResult(problem)
-                | Validation errors ->
-                    let problem = validationProblemDetails error
-                    problem.Status <- 400
-
-                    errors
-                    |> Map.iter (fun key value -> problem.Errors.Add(key, value |> Array.ofList))
-
-                    return BadRequestObjectResult(problem)
-                | Conflict errors ->
-                    let problem = validationProblemDetails error
-                    problem.Status <- 409
-
-                    errors
-                    |> Map.iter (fun key value -> problem.Errors.Add(key, value |> Array.ofList))
-
-                    return ConflictObjectResult(problem)
-        }
-
 module TodoListServices =
-    let addTask ct listId (dto: TodoListCommand.AddTaskDto) =
+    let addTask ct (dto: TodoListCommand.AddTaskDto) =
         taskResult {
             let! command =
                 TodoListCommand.createAddTask dto
@@ -102,9 +25,8 @@ module TodoListServices =
             let state = ref TodoListState.init
             let events = ref []
 
-            let! useCase =
-                TodoListAggregateUseCase.create
-                    ct
+            let useCase =
+                TodoListAggregateUseCase.createStateless
                     { readState = fun _ -> Task.FromResult(Ok(state.Value, Seq.empty))
                       writeState =
                         fun ct state' events' ->
@@ -161,33 +83,15 @@ type TodoListController(logger: ILogger<TodoListController>) as this =
         taskResult {
             let dto = toAddTaskDto body
             let listId = EntityId.newGuid ()
-            let! state = TodoListServices.addTask ct listId dto
+            let! state = TodoListServices.addTask ct dto
             let state = toResponseBody listId state
             return state
         }
         |> RestApi.toActionResult
 
 open Todos.Grpc.TodoList
-open Google.Protobuf.Collections
-open Google.Protobuf
 open Google.Protobuf.FSharp.WellKnownTypes
-
-module RepeatedField =
-    let ofSeq (source: 'a seq) : RepeatedField<'a> =
-        let field = RepeatedField<_>()
-        field.AddRange(source)
-        field
-
-module Timestamp =
-    let fromDateTimeOption (dateTime: DateTime option) : Timestamp voption =
-        dateTime
-        |> Option.map Timestamp.FromDateTime
-        |> ValueOption.ofOption
-
-    let toDateTimeOption (timestamp: Timestamp voption) : DateTime option =
-        timestamp
-        |> ValueOption.bind (fun d -> d.ToDateTime())
-        |> Option.ofValueOption
+open FsClean.Presenters.Grpc
 
 module GrpcApi =
     let toValidationErrorData (errors: Map<string, string list>) : FsClean.Grpc.ValidationErrorData =
@@ -262,7 +166,7 @@ type TodoListCommandGrpcServer() =
         taskResult {
             let dto = toAddTaskDto request
             let listId = EntityId.newGuid ()
-            let! state = TodoListServices.addTask context.CancellationToken listId dto
+            let! state = TodoListServices.addTask context.CancellationToken dto
             let state = toTodoList listId state
             return state
         }
