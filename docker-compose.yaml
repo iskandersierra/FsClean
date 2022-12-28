@@ -1,0 +1,60 @@
+version: '3.8'
+
+name: fsclean
+
+services:
+  # seq:
+  #   image: datalust/seq:latest
+  #   restart: 'no'
+  #   ports:
+  #     - '5380:80'
+  #     - '5341:5341'
+  #   environment:
+  #     - ACCEPT_EULA=Y
+  #   volumes:
+  #     - seq-data:/data
+
+  # jaeger:
+  #   image: jaegertracing/all-in-one:1.34
+  #   restart: 'no'
+  #   ports:
+  #     - '6831:6831/udp'
+  #     - '16686:16686'
+
+  # sql:
+  #   image: mcr.microsoft.com/mssql/server:2019-latest
+  #   restart: 'no'
+  #   ports:
+  #     - '1433:1433'
+  #   environment:
+  #     - ACCEPT_EULA=Y
+  #     - SA_PASSWORD=P4ssword
+  #   volumes:
+  #     - sql-data:/var/opt/mssql
+
+  nats:
+    image: nats:alpine3.15
+    command: -js --http_port 8222
+    restart: 'no'
+    ports:
+      - '4222:4222'
+      - '8222:8222'
+    volumes:
+      - nats-data:/data
+
+  # smtp4dev:
+  #   # https://github.com/rnwood/smtp4dev/blob/master/docker-compose.yml
+  #   image: rnwood/smtp4dev:v3
+  #   restart: 'no'
+  #   ports:
+  #     - '25:25'
+  #     - '143:143'
+  #     - '6080:80'
+  #   volumes:
+  #     - smtp-data:/smtp4dev
+
+volumes:
+  # seq-data:
+  # sql-data:
+  nats-data:
+  # smtp-data:

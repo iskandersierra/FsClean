@@ -2,75 +2,87 @@
 
 open System.Threading
 open System.Threading.Tasks
-open FSharp.Control
 
-type EventEnvelope =
+type EventEnvelope<'event> =
     { eventId: string
       meta: Map<string, string>
-      data: byte []
-      schema: string }
+      event: 'event }
 
-type PersistedEventEnvelope =
+type PersistedEventEnvelope<'event> =
     { partitionId: string
       entityType: string
       entityId: string
+      globalSequence: uint64
+      partitionSequence: uint64
+      entitySequence: uint64
       eventId: string
-      version: uint64
       meta: Map<string, string>
-      data: byte []
-      schema: string }
+      event: 'event }
 
-type EventStoreAppend = CancellationToken -> EventStoreAppendParams -> Task<EventStoreAppendResult>
+type EventStoreAppend<'event> = CancellationToken -> EventStoreAppendParams<'event> -> Task<EventStoreAppendResult>
 
-and EventStoreAppendParams =
+and EventStoreAppendParams<'event> =
     { partitionId: string
       entityType: string
       entityId: string
-      currentVersion: uint64
-      events: EventEnvelope seq }
+      entitySequence: uint64
+      events: EventEnvelope<'event> seq }
 
-and EventStoreAppendResult = { currentVersion: uint64 }
+and EventStoreAppendResult =
+    { globalSequence: uint64
+      partitionSequence: uint64
+      entitySequence: uint64 }
 
-type EventStoreRead = CancellationToken -> EventStoreReadParams -> AsyncSeq<EventStoreReadPage>
+type EventStoreRead<'event> = CancellationToken -> EventStoreReadParams -> Task<EventStoreReadResult<'event>>
 
-and EventStoreReadParams =
-    { filter: EventStoreReadFilter
-      version: EventStoreReadVersion }
-// TODO: Add subscription parameters
+and EventStoreReadParams = { filter: EventStoreReadFilter }
 
 and EventStoreReadFilter =
     | EventStoreReadNoFilter
-    | EventStoreReadPartition of partitionId: string
-    | EventStoreReadEntityType of partitionId: string * entityType: string
-    | EventStoreReadEntity of partitionId: string * entityType: string * entityId: string
+    | EventStoreReadPartition of EventStoreReadPartition
+    | EventStoreReadEntityType of EventStoreReadEntityType
+    | EventStoreReadEntityInstance of EventStoreReadEntityInstance
 
-and EventStoreReadVersion =
-    | EventStoreReadAllEvents
-    | EventStoreReadAfterVersion of version: uint64
+and EventStoreReadPartition =
+    { partitionId: string
+      sequence: uint64 option }
 
-and EventStoreReadPage =
-    { events: PersistedEventEnvelope
-      currentVersion: uint64 }
+and EventStoreReadEntityType =
+    { partitionId: string
+      entityType: string
+      sequence: uint64 option }
 
-type EventStore =
-    { append: EventStoreAppend
-      read: EventStoreRead }
+and EventStoreReadEntityInstance =
+    { partitionId: string
+      entityType: string
+      entityId: string
+      sequence: uint64 option }
 
-type IEventStore =
+and EventStoreReadResult<'event> =
+    { events: PersistedEventEnvelope<'event>
+      sequence: uint64
+      isLastPage: bool }
+
+type EventStore<'event> =
+    { append: EventStoreAppend<'event>
+      read: EventStoreRead<'event> }
+
+type IEventStore<'event> =
     abstract AppendAsync :
-        parameters: EventStoreAppendParams * cancellationToken: CancellationToken -> Task<EventStoreAppendResult>
+        parameters: EventStoreAppendParams<'event> * cancellationToken: CancellationToken ->
+        Task<EventStoreAppendResult>
 
     abstract ReadAsync :
-        parameters: EventStoreReadParams * cancellationToken: CancellationToken -> AsyncSeq<EventStoreReadPage>
+        parameters: EventStoreReadParams * cancellationToken: CancellationToken -> Task<EventStoreReadResult<'event>>
 
 module EventStore =
-    let toInterface (store: EventStore) =
-        { new IEventStore with
+    let toInterface (store: EventStore<'event>) =
+        { new IEventStore<'event> with
             member __.AppendAsync(parameters, cancellationToken) =
                 store.append cancellationToken parameters
 
             member __.ReadAsync(parameters, cancellationToken) = store.read cancellationToken parameters }
 
-    let ofInterface (store: IEventStore) =
+    let ofInterface (store: IEventStore<'event>) =
         { append = (fun cancellationToken parameters -> store.AppendAsync(parameters, cancellationToken))
           read = (fun cancellationToken parameters -> store.ReadAsync(parameters, cancellationToken)) }

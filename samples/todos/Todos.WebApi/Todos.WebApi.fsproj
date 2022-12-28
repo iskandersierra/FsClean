@@ -27,8 +27,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\core\presenters\FsClean.Presenters.Grpc\FsClean.Presenters.Grpc.fsproj" />
-    <ProjectReference Include="..\..\..\src\core\presenters\FsClean.Presenters.Rest\FsClean.Presenters.Rest.fsproj" />
+    <ProjectReference Include="..\..\..\src\presenters\FsClean.Presenters.Grpc\FsClean.Presenters.Grpc.fsproj" />
+    <ProjectReference Include="..\..\..\src\presenters\FsClean.Presenters.Rest\FsClean.Presenters.Rest.fsproj" />
     <ProjectReference Include="..\Todos.Application\Todos.Application.fsproj" />
     <ProjectReference Include="..\Todos.Business\Todos.Business.fsproj" />
     <ProjectReference Include="..\Todos.Domain\Todos.Domain.fsproj" />

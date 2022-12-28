@@ -8,18 +8,18 @@ open FsClean
 open FsClean.Application.EventSourcing
 open FSharp.Control
 
-type InMemoryEventStore =
-    { dump: unit -> Task<PersistedEventEnvelope []>
+type InMemoryEventStore<'event> =
+    { dump: unit -> Task<PersistedEventEnvelope<'event> []>
       clear: unit -> Task
-      reset: PersistedEventEnvelope seq -> Task }
+      reset: PersistedEventEnvelope<'event> seq -> Task }
 
-type internal InMemoryOperation =
-    | AppendOp of CancellationToken * EventStoreAppendParams * AsyncReplyChannel<EventStoreAppendResult>
-    | ReadOp of CancellationToken * EventStoreReadParams * AsyncReplyChannel<AsyncSeq<EventStoreReadPage>>
-    | DumpOp of AsyncReplyChannel<PersistedEventEnvelope array>
-    | ResetOp of PersistedEventEnvelope [] * AsyncReplyChannel<unit>
+type internal InMemoryOperation<'event> =
+    | AppendOp of CancellationToken * EventStoreAppendParams<'event> * AsyncReplyChannel<EventStoreAppendResult>
+    | ReadOp of CancellationToken * EventStoreReadParams * AsyncReplyChannel<EventStoreReadResult<'event>>
+    | DumpOp of AsyncReplyChannel<PersistedEventEnvelope<'event> []>
+    | ResetOp of PersistedEventEnvelope<'event> [] * AsyncReplyChannel<unit>
 
-//let create (events: PersistedEventEnvelope seq) =
+//let create (events: PersistedEventEnvelope<'event> seq) : EventStore<'event> =
 //    let mailbox =
 //        MailboxProcessor.Start (fun inbox ->
 //            let events = ResizeArray events
@@ -28,11 +28,25 @@ type internal InMemoryOperation =
 //            let rec loop () =
 //                async {
 //                    match! inbox.Receive() with
-//                    | AppendOp (ct, key, value, reply) ->
-//                        data.[key] <- value
-//                        reply.Reply()
+//                    | AppendOp (ct, parameters, reply) ->
+//                        let mutable currentVersion = parameters.currentVersion
 
-//                    | ReadOp (ct, key, value, reply) ->
+//                        parameters.events
+//                        |> Seq.mapi (fun i e ->
+//                            currentVersion <- parameters.currentVersion + uint64 i + 1UL
+
+//                            { partitionId = parameters.partitionId
+//                              entityType = parameters.entityType
+//                              entityId = parameters.entityId
+//                              entitySequence = currentVersion
+//                              meta = e.meta
+//                              eventId = e.eventId
+//                              event = e.event })
+//                        |> events.AddRange
+
+//                        reply.Reply { currentVersion = currentVersion }
+
+//                    | ReadOp (ct, parameters, reply) ->
 //                        data.[key] <- value
 //                        reply.Reply()
 
@@ -96,10 +110,5 @@ type internal InMemoryOperation =
 //    { dump = dump
 //      reset = reset
 //      clear = clear }
-
-//let create pairs =
-//    createWithComparer EqualityComparer.defaultOf<'key> pairs
-
-//let emptyWithComparer comparer = createWithComparer comparer []
 
 //let empty () = create []

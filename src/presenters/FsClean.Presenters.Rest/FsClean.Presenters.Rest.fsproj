@@ -6,12 +6,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="InMemoryKeyValueStorage.fs" />
-        <Compile Include="InMemoryEventSourcing.fs" />
+        <Compile Include="RestApi.fs" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\FsClean.Application\FsClean.Application.fsproj" />
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+        <ProjectReference Include="..\..\core\FsClean.Domain\FsClean.Domain.fsproj" />
     </ItemGroup>
 
 </Project>

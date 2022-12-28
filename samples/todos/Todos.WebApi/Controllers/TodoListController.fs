@@ -60,7 +60,7 @@ type TodoListCommandResponseBody =
 
 [<ApiController>]
 [<Route("api/rest/todo-list")>]
-type TodoListController(logger: ILogger<TodoListController>) as this =
+type TodoListController(logger: ILogger<TodoListController>) =
     inherit ControllerBase()
 
     let toAddTaskDto (body: AddTaskRequestBody) : TodoListCommand.AddTaskDto =
