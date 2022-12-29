@@ -23,15 +23,15 @@ module TodoListServices =
                 |> DomainError.ofValidusValidationResult
 
             let state = ref TodoListState.init
-            let events = ref []
+            let event = ref Unchecked.defaultof<_>
 
             let useCase =
                 TodoListAggregateUseCase.createStateless
-                    { readState = fun _ -> Task.FromResult(Ok(state.Value, Seq.empty))
+                    { readState = fun _ -> Task.FromResult(Ok(state.Value, Array.empty))
                       writeState =
-                        fun ct state' events' ->
+                        fun ct state' event' ->
                             state.Value <- state'
-                            events.Value <- events' |> Seq.toList
+                            event.Value <- event'
                             Task.FromResult(Ok()) }
 
             do! useCase.execute ct command

@@ -9,7 +9,7 @@ type RemoveKeyValue<'key> = CancellationToken -> 'key -> Task
 
 type TryLoadKeyValue<'key, 'value> = CancellationToken -> 'key -> Task<'value option>
 
-type TryLoadManyKeyValue<'key, 'value> = CancellationToken -> 'key seq -> Task<('key * 'value) seq>
+type TryLoadManyKeyValue<'key, 'value> = CancellationToken -> 'key seq -> Task<('key * 'value) array>
 
 type TryLoadFirstKeyValue<'key, 'value> = CancellationToken -> 'key seq -> Task<('key * 'value) option>
 
@@ -24,7 +24,7 @@ type IKeyValueStorage<'key, 'value> =
     abstract SaveAsync : key: 'key * value: 'value * cancellationToken: CancellationToken -> Task
     abstract RemoveAsync : key: 'key * cancellationToken: CancellationToken -> Task
     abstract TryLoadKeyAsync : key: 'key * cancellationToken: CancellationToken -> Task<'value option>
-    abstract TryLoadManyKeyValue : keys: 'key seq * cancellationToken: CancellationToken -> Task<('key * 'value) seq>
+    abstract TryLoadManyKeyValue : keys: 'key seq * cancellationToken: CancellationToken -> Task<('key * 'value) array>
 
     abstract TryLoadFirstKeyValue :
         keys: 'key seq * cancellationToken: CancellationToken -> Task<('key * 'value) option>

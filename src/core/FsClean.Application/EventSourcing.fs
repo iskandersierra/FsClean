@@ -13,8 +13,7 @@ type PersistedEventEnvelope<'event> =
       entityType: string
       entityId: string
       globalSequence: uint64
-      partitionSequence: uint64
-      entitySequence: uint64
+      instanceSequence: uint64
       eventId: string
       meta: Map<string, string>
       event: 'event }
@@ -26,12 +25,11 @@ and EventStoreAppendParams<'event> =
       entityType: string
       entityId: string
       entitySequence: uint64
-      events: EventEnvelope<'event> seq }
+      event: EventEnvelope<'event> }
 
 and EventStoreAppendResult =
     { globalSequence: uint64
-      partitionSequence: uint64
-      entitySequence: uint64 }
+      instanceSequence: uint64 }
 
 type EventStoreRead<'event> = CancellationToken -> EventStoreReadParams -> Task<EventStoreReadResult<'event>>
 

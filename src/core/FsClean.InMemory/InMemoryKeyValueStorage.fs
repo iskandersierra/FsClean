@@ -97,7 +97,6 @@ let createWithComparer comparer pairs =
 
     let tryLoadMany ct keys =
         mailbox.PostAndAsyncReply(fun reply -> TryLoadManyOp(ct, Seq.toArray keys, reply))
-        |> Async.map Array.toSeq
         |> Async.toTask
 
     let tryLoadFirst ct keys =

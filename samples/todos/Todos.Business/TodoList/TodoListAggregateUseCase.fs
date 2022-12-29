@@ -1,13 +1,13 @@
 ﻿module Todos.Business.TodoList.TodoListAggregateUseCase
 
-open FsClean.Business.UseCases.AggregateUseCase
+open FsClean.Business.UseCases
 
 open Todos.Domain.TodoList
 
-let definition =
+let definition : AggregateUseCase.Definition<TodoListState, TodoListEvent, TodoListCommand> =
     { applyEvent = TodoListState.apply
       executeCommand = TodoListAggregate.execute }
 
-let create ct = create ct definition
+let create ct = AggregateUseCase.create ct definition
 
-let createStateless = createStateless definition
+let createStateless = AggregateUseCase.createStateless definition

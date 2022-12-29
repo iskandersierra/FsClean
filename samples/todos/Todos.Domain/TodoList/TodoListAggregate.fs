@@ -17,6 +17,9 @@ module TodoListAggregate =
         |> DomainError.setOperation Operations.KEEP_TASK_OPEN
 
     let execute state =
+        let ok = Some >> Ok
+        let none = Ok None
+
         function
         | AddTask command ->
             let taskId =
@@ -26,61 +29,46 @@ module TodoListAggregate =
                     | Some taskId -> TaskId.value taskId + 1 |> TaskId
                     | None -> 1 |> TaskId
 
-            let taskAdded =
-                TaskAdded
-                    {| taskId = taskId
-                       title = command.title
-                       dueDate = command.dueDate |}
-
-            Ok [ taskAdded ]
+            TaskAdded
+                {| taskId = taskId
+                   title = command.title
+                   dueDate = command.dueDate |}
+            |> ok
 
         | RemoveTask command ->
             match state.tasks |> Map.tryFind command.taskId with
-            | Some _ ->
-                let taskRemoved =
-                    TaskRemoved {| taskId = command.taskId |}
-
-                Ok [ taskRemoved ]
-            | None -> Ok []
+            | Some _ -> TaskRemoved {| taskId = command.taskId |} |> ok
+            | None -> none
 
         | ClearAllTasks ->
             match state.tasks |> Map.isEmpty with
-            | true -> Ok []
-            | false -> Ok [ AllTasksCleared ]
+            | true -> none
+            | false -> AllTasksCleared |> ok
 
         | CompleteTask command ->
             match state.tasks |> Map.tryFind command.taskId with
-            | Some task when not task.completed ->
-                let taskCompleted =
-                    TaskCompleted {| taskId = command.taskId |}
-
-                Ok [ taskCompleted ]
-            | Some _ -> Ok []
+            | Some task when not task.completed -> TaskCompleted {| taskId = command.taskId |} |> ok
+            | Some _ -> none
             | None -> completeTaskIdDoesNotExists |> Error
 
         | PostponeTask command ->
             match state.tasks |> Map.tryFind command.taskId with
             | Some task when not task.completed ->
                 if task.dueDate = Some command.dueDate then
-                    Ok []
+                    none
                 else
-                    let taskPostponed =
-                        TaskPostponed
-                            {| taskId = command.taskId
-                               dueDate = command.dueDate |}
-
-                    Ok [ taskPostponed ]
-            | Some _ -> Ok []
+                    TaskPostponed
+                        {| taskId = command.taskId
+                           dueDate = command.dueDate |}
+                    |> ok
+            | Some _ -> none
             | None -> postponeTaskIdDoesNotExists |> Error
 
         | KeepTaskOpen command ->
             match state.tasks |> Map.tryFind command.taskId with
             | Some task ->
                 if task.completed || task.dueDate = None then
-                    Ok []
+                    none
                 else
-                    let taskKeptOpen =
-                        TaskKeptOpen {| taskId = command.taskId |}
-
-                    Ok [ taskKeptOpen ]
+                    TaskKeptOpen {| taskId = command.taskId |} |> ok
             | None -> keepTaskOpenIdDoesNotExists |> Error
