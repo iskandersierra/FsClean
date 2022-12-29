@@ -89,44 +89,44 @@ type TodoListController(logger: ILogger<TodoListController>) =
         }
         |> RestApi.toActionResult
 
-open Todos.Grpc.TodoList
 open Google.Protobuf.FSharp.WellKnownTypes
 open FsClean.Presenters.Grpc
+open Todos.Grpc.TodoList
 
-module GrpcApi =
-    let toValidationErrorData (errors: Map<string, string list>) : FsClean.Grpc.ValidationErrorData =
-        errors
-        |> Map.toSeq
-        |> Seq.map (fun (field, errors) ->
-            { FsClean.Grpc.ValidationError.empty () with
-                Field = field
-                Messages = RepeatedField.ofSeq errors })
-        |> RepeatedField.ofSeq
-        |> fun errors -> { FsClean.Grpc.ValidationErrorData.empty () with Errors = errors }
+//module GrpcApi =
+//    let toValidationErrorData (errors: Map<string, string list>) : FsClean.Grpc.ValidationErrorData =
+//        errors
+//        |> Map.toSeq
+//        |> Seq.map (fun (field, errors) ->
+//            { FsClean.Grpc.ValidationError.empty () with
+//                Field = field
+//                Messages = RepeatedField.ofSeq errors })
+//        |> RepeatedField.ofSeq
+//        |> fun errors -> { FsClean.Grpc.ValidationErrorData.empty () with Errors = errors }
 
 
-    let toDomainError (error: FsClean.Domain.DomainError) : FsClean.Grpc.DomainError =
-        let errorData =
-            match error.errorData with
-            | Failure -> FsClean.Grpc.DomainError.Types.ErrorData.Failure true
-            | Unexpected -> FsClean.Grpc.DomainError.Types.ErrorData.Unexpected true
-            | NotFound -> FsClean.Grpc.DomainError.Types.ErrorData.NotFound true
-            | Unauthorized -> FsClean.Grpc.DomainError.Types.ErrorData.Unauthorized true
-            | Validation errors ->
-                toValidationErrorData errors
-                |> FsClean.Grpc.DomainError.Types.ErrorData.Validation
-            | Conflict errors ->
-                toValidationErrorData errors
-                |> FsClean.Grpc.DomainError.Types.ErrorData.Conflict
+//    let toDomainError (error: FsClean.Domain.DomainError) : FsClean.Presenters.Grpc.DomainError =
+//        let errorData =
+//            match error.errorData with
+//            | Failure -> FsClean.Presenters.Grpc.DomainError.Types.ErrorData.Failure true
+//            | Unexpected -> FsClean.Presenters.Grpc.DomainError.Types.ErrorData.Unexpected true
+//            | NotFound -> FsClean.Presenters.Grpc.DomainError.Types.ErrorData.NotFound true
+//            | Unauthorized -> FsClean.Presenters.Grpc.DomainError.Types.ErrorData.Unauthorized true
+//            | Validation errors ->
+//                toValidationErrorData errors
+//                |> FsClean.Presenters.Grpc.DomainError.Types.ErrorData.Validation
+//            | Conflict errors ->
+//                toValidationErrorData errors
+//                |> FsClean.Presenters.Grpc.DomainError.Types.ErrorData.Conflict
 
-        { FsClean.Grpc.DomainError.empty () with
-            Code = error.code
-            Description = error.description
-            Service = error.service |> Option.toObj
-            Entity = error.entity |> Option.toObj
-            Operation = error.operation |> Option.toObj
-            EntityId = error.entityId |> Option.toObj
-            ErrorData = ValueOption.Some errorData }
+//        { FsClean.Presenters.Grpc.DomainError.empty () with
+//            Code = error.code
+//            Description = error.description
+//            Service = error.service |> Option.toObj
+//            Entity = error.entity |> Option.toObj
+//            Operation = error.operation |> Option.toObj
+//            EntityId = error.entityId |> Option.toObj
+//            ErrorData = ValueOption.Some errorData }
 
 type TodoListCommandGrpcServer() =
     inherit TodoListCommandService.TodoListCommandServiceBase()
