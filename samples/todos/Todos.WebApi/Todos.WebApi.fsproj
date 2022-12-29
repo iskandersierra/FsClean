@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!--<Protobuf Include="Protos\DomainError.proto" GrpcServices="Both" Link="Protos\DomainError.proto" />-->
     <None Include="Protos\DomainError.proto" />
     <Protobuf Include="Protos\TodoListService.proto" GrpcServices="Both" Link="Protos\TodoListService.proto" />
     <Compile Include="Controllers\TodoListController.fs" />
