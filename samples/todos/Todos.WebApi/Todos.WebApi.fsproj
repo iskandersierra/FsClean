@@ -9,7 +9,8 @@
   <ItemGroup>
     <None Include="Protos\DomainError.proto" />
     <Protobuf Include="Protos\TodoListService.proto" GrpcServices="Both" Link="Protos\TodoListService.proto" />
-    <Compile Include="Controllers\TodoListController.fs" />
+    <Compile Include="Controllers\TodoListRestController.fs" />
+    <Compile Include="Controllers\TodoListGrpcController.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
@@ -30,8 +31,6 @@
     <ProjectReference Include="..\..\..\src\presenters\FsClean.Presenters.Grpc\FsClean.Presenters.Grpc.fsproj" />
     <ProjectReference Include="..\..\..\src\presenters\FsClean.Presenters.Rest\FsClean.Presenters.Rest.fsproj" />
     <ProjectReference Include="..\Todos.Application\Todos.Application.fsproj" />
-    <ProjectReference Include="..\Todos.Business\Todos.Business.fsproj" />
-    <ProjectReference Include="..\Todos.Domain\Todos.Domain.fsproj" />
   </ItemGroup>
 
 </Project>

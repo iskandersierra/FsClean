@@ -2,12 +2,11 @@
 
 open System
 
+open FsClean.Domain
+open FsToolkit.ErrorHandling
 open Google.Protobuf.Collections
 open Google.Protobuf.FSharp.WellKnownTypes
 
-open FsToolkit.ErrorHandling
-
-open FsClean.Domain
 
 [<RequireQualifiedAccess>]
 

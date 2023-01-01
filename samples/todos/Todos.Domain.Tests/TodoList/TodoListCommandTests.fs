@@ -1,19 +1,19 @@
-﻿module Todos.Domain.TodoList.TodoListCommandTests
+﻿module Todos.Domain.TodoList.CommandTests
 
 open System
 open Xunit
 open Swensen.Unquote
 open FsCheck
 open FsCheck.Xunit
-open Validus
-
 open FsClean.Domain
 open FsClean.Domain.ValueTypesTests
+open Validus
+
 open Todos.Domain.TodoList
 
 [<Property>]
-let ``TodoListCommand.createAddTask should validate the command`` dto =
-    let result = TodoListCommand.createAddTask dto
+let ``Command.createAddTask should validate the command`` dto =
+    let result = Command.createAddTask dto
     let expected =
         validate {
             let! title = TaskTitle.create dto.title
@@ -27,8 +27,8 @@ let ``TodoListCommand.createAddTask should validate the command`` dto =
     test <@ result = expected @>
 
 [<Property>]
-let ``TodoListCommand.createRemoveTask should validate the command`` dto =
-    let result = TodoListCommand.createRemoveTask dto
+let ``Command.createRemoveTask should validate the command`` dto =
+    let result = Command.createRemoveTask dto
     let expected =
         validate {
             let! taskId = TaskId.create dto.taskId
@@ -37,8 +37,8 @@ let ``TodoListCommand.createRemoveTask should validate the command`` dto =
     test <@ result = expected @>
 
 [<Property>]
-let ``TodoListCommand.createCompleteTask should validate the command`` dto =
-    let result = TodoListCommand.createCompleteTask dto
+let ``Command.createCompleteTask should validate the command`` dto =
+    let result = Command.createCompleteTask dto
     let expected =
         validate {
             let! taskId = TaskId.create dto.taskId
@@ -47,8 +47,8 @@ let ``TodoListCommand.createCompleteTask should validate the command`` dto =
     test <@ result = expected @>
 
 [<Property>]
-let ``TodoListCommand.createPostponeTask should validate the command`` dto =
-    let result = TodoListCommand.createPostponeTask dto
+let ``Command.createPostponeTask should validate the command`` dto =
+    let result = Command.createPostponeTask dto
     let expected =
         validate {
             let! taskId = TaskId.create dto.taskId
@@ -59,8 +59,8 @@ let ``TodoListCommand.createPostponeTask should validate the command`` dto =
     test <@ result = expected @>
 
 [<Property>]
-let ``TodoListCommand.createKeepTaskOpen should validate the command`` dto =
-    let result = TodoListCommand.createKeepTaskOpen dto
+let ``Command.createKeepTaskOpen should validate the command`` dto =
+    let result = Command.createKeepTaskOpen dto
     let expected =
         validate {
             let! taskId = TaskId.create dto.taskId

@@ -3,11 +3,10 @@
 open System
 open System.Globalization
 
-open NATS.Client
-open NATS.Client.JetStream
-
 open FsClean
 open FsClean.Application.EventSourcing
+open NATS.Client
+open NATS.Client.JetStream
 
 type Options =
     { conn: IConnection

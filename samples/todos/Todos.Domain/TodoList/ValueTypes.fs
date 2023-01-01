@@ -1,9 +1,9 @@
 namespace Todos.Domain.TodoList
 
 open System
-open Validus
 
 open FsClean.Domain
+open Validus
 
 type TaskId = TaskId of value: int
 

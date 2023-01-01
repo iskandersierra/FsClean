@@ -1,10 +1,11 @@
 ﻿namespace Todos.Domain.TodoList
 
 open System
-open Validus
-open FsClean.Domain
 
-type TodoListCommand =
+open FsClean.Domain
+open Validus
+
+type Command =
     | AddTask of
         {| title: TaskTitle
            dueDate: TaskDueDate option |}
@@ -16,7 +17,7 @@ type TodoListCommand =
            dueDate: TaskDueDate |}
     | KeepTaskOpen of {| taskId: TaskId |}
 
-module TodoListCommand =
+module Command =
     type AddTaskDto =
         { title: string
           dueDate: DateTime option }

@@ -5,10 +5,10 @@ open System.Collections.Generic
 open System.Globalization
 open System.Threading
 open System.Threading.Tasks
+open FSharp.Control
 
 open FsClean
 open FsClean.Application.EventSourcing
-open FSharp.Control
 
 type InMemoryEventStore<'event> =
     { dump: unit -> Task<PersistedEventEnvelope<'event> []>

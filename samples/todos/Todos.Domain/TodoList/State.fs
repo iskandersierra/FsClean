@@ -2,7 +2,7 @@
 
 open System
 
-type TodoListState = { tasks: Map<TaskId, TaskState> }
+type State = { tasks: Map<TaskId, TaskState> }
 
 and TaskState =
     { taskId: TaskId
@@ -10,7 +10,8 @@ and TaskState =
       dueDate: TaskDueDate option
       completed: bool }
 
-module TodoListState =
+[<RequireQualifiedAccess>]
+module State =
     let init = { tasks = Map.empty }
 
     let apply state =
@@ -55,16 +56,16 @@ module TodoListState =
                         |> Map.add event.taskId { todoTask with dueDate = None } }
             | None -> state
 
-    type TodoListStateDto =
-        { tasks: TaskStateDto list }
+    type Dto =
+        { tasks: TaskDto list }
 
-    and TaskStateDto =
+    and TaskDto =
         { taskId: int
           title: string
           dueDate: DateTime option
           completed: bool }
 
-    let toDto (state: TodoListState) : TodoListStateDto =
+    let toDto (state: State) : Dto =
         { tasks =
             state.tasks
             |> Map.toList
@@ -74,3 +75,14 @@ module TodoListState =
                   title = task.title |> TaskTitle.value
                   dueDate = task.dueDate |> Option.map TaskDueDate.value
                   completed = task.completed }) }
+
+    let ofDto (dto: Dto) : State =
+        { State.tasks =
+            dto.tasks
+            |> List.map (fun task ->
+                TaskId(task.taskId),
+                { TaskState.taskId = TaskId(task.taskId)
+                  title = TaskTitle(task.title)
+                  dueDate = task.dueDate |> Option.map TaskDueDate
+                  completed = task.completed })
+            |> Map.ofList }

@@ -5,10 +5,10 @@ open Xunit
 open Swensen.Unquote
 open FsCheck
 open FsCheck.Xunit
-open Validus
-
 open FsClean.Domain
 open FsClean.Domain.ValueTypesTests
+open Validus
+
 open Todos.Domain.TodoList
 
 [<Fact>]
@@ -20,7 +20,7 @@ let ``TodoListAggregate.execute on AddTask should return events`` () =
 
     let state = { tasks = Map.empty }
 
-    let result = TodoListAggregate.execute state command
+    let result = Aggregate.execute state command
 
     let expected =
         TaskAdded
@@ -45,7 +45,7 @@ let ``TodoListAggregate.execute on RemoveTask when task exists should return eve
                           dueDate = None
                           completed = false } ] }
 
-    let result = TodoListAggregate.execute state command
+    let result = Aggregate.execute state command
 
     let expected =
         TaskRemoved {| taskId = TaskId taskId |} |> Some
@@ -60,7 +60,7 @@ let ``TodoListAggregate.execute on RemoveTask when task does not exist should re
 
     let state = { tasks = Map.empty }
 
-    let result = TodoListAggregate.execute state command
+    let result = Aggregate.execute state command
 
     test <@ result = Ok None @>
 
@@ -78,7 +78,7 @@ let ``TodoListAggregate.execute on ClearAllTasks when tasks exist should return 
                           dueDate = None
                           completed = false } ] }
 
-    let result = TodoListAggregate.execute state command
+    let result = Aggregate.execute state command
 
     let expected = AllTasksCleared |> Some
 
@@ -90,7 +90,7 @@ let ``TodoListAggregate.execute on ClearAllTasks when tasks do not exist should 
 
     let state = { tasks = Map.empty }
 
-    let result = TodoListAggregate.execute state command
+    let result = Aggregate.execute state command
 
     test <@ result = Ok None @>
 
@@ -109,7 +109,7 @@ let ``TodoListAggregate.execute on CompleteTask when task exists should return e
                           dueDate = None
                           completed = false } ] }
 
-    let result = TodoListAggregate.execute state command
+    let result = Aggregate.execute state command
 
     let expected =
         TaskCompleted {| taskId = TaskId taskId |} |> Some
@@ -131,7 +131,7 @@ let ``TodoListAggregate.execute on CompleteTask when task is already completed s
                           dueDate = None
                           completed = true } ] }
 
-    let result = TodoListAggregate.execute state command
+    let result = Aggregate.execute state command
 
     test <@ result = Ok None @>
 
@@ -144,10 +144,10 @@ let ``TodoListAggregate.execute on CompleteTask when task does not exist should 
 
     let state = { tasks = Map.empty }
 
-    let result = TodoListAggregate.execute state command
+    let result = Aggregate.execute state command
 
     let expected =
-        TodoListAggregate.completeTaskIdDoesNotExists
+        Aggregate.completeTaskIdDoesNotExists
 
     test <@ result = Error expected @>
 
@@ -170,7 +170,7 @@ let ``TodoListAggregate.execute on PostponeTask when task exists should return e
                           dueDate = None
                           completed = false } ] }
 
-    let result = TodoListAggregate.execute state command
+    let result = Aggregate.execute state command
 
     let expected =
         TaskPostponed
@@ -199,7 +199,7 @@ let ``TodoListAggregate.execute on PostponeTask when dueDate is the same should 
                           dueDate = Some(TaskDueDate newDate)
                           completed = false } ] }
 
-    let result = TodoListAggregate.execute state command
+    let result = Aggregate.execute state command
 
     test <@ result = Ok None @>
 
@@ -222,7 +222,7 @@ let ``TodoListAggregate.execute on PostponeTask when task is already completed s
                           dueDate = None
                           completed = true } ] }
 
-    let result = TodoListAggregate.execute state command
+    let result = Aggregate.execute state command
 
     test <@ result = Ok None @>
 
@@ -239,10 +239,10 @@ let ``TodoListAggregate.execute on PostponeTask when task does not exist should 
 
     let state = { tasks = Map.empty }
 
-    let result = TodoListAggregate.execute state command
+    let result = Aggregate.execute state command
 
     let expected =
-        TodoListAggregate.postponeTaskIdDoesNotExists
+        Aggregate.postponeTaskIdDoesNotExists
 
     test <@ result = Error expected @>
 
@@ -261,7 +261,7 @@ let ``TodoListAggregate.execute on KeepTaskOpen when task exists should return e
                           dueDate = Some(TaskDueDate(DateTime.Now.AddDays 1.0))
                           completed = false } ] }
 
-    let result = TodoListAggregate.execute state command
+    let result = Aggregate.execute state command
 
     let expected =
         TaskKeptOpen {| taskId = TaskId taskId |} |> Some
@@ -283,7 +283,7 @@ let ``TodoListAggregate.execute on KeepTaskOpen when task is already completed s
                           dueDate = Some(TaskDueDate(DateTime.Now.AddDays 1.0))
                           completed = true } ] }
 
-    let result = TodoListAggregate.execute state command
+    let result = Aggregate.execute state command
 
     test <@ result = Ok None @>
 
@@ -296,9 +296,9 @@ let ``TodoListAggregate.execute on KeepTaskOpen when task does not exist should 
 
     let state = { tasks = Map.empty }
 
-    let result = TodoListAggregate.execute state command
+    let result = Aggregate.execute state command
 
     let expected =
-        TodoListAggregate.keepTaskOpenIdDoesNotExists
+        Aggregate.keepTaskOpenIdDoesNotExists
 
     test <@ result = Error expected @>

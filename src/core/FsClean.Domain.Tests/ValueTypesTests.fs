@@ -5,10 +5,10 @@ open Xunit
 open Swensen.Unquote
 open FsCheck
 open FsCheck.Xunit
-open Validus
-
 open FsClean
 open FsClean.String.Patterns
+open Validus
+
 
 let internal testValidator validator =
     fun value result ->

@@ -4,8 +4,8 @@ open System
 open Xunit
 open Swensen.Unquote
 open FsCheck.Xunit
-
 open FsClean.Domain
+
 open Todos.Domain.TodoList
 
 [<Fact>]

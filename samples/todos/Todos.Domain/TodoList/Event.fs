@@ -1,6 +1,6 @@
 ﻿namespace Todos.Domain.TodoList
 
-type TodoListEvent =
+type Event =
     | TaskAdded of
         {| taskId: TaskId
            title: TaskTitle

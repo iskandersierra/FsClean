@@ -5,8 +5,8 @@ open System.Collections.Generic
 open Xunit
 open Swensen.Unquote
 open FsCheck.Xunit
-
 open FsClean
+
 
 [<Fact>]
 let ``defaultOf`` () =

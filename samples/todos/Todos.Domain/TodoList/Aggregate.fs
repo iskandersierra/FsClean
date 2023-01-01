@@ -3,7 +3,7 @@
 open FsClean
 open FsClean.Domain
 
-module TodoListAggregate =
+module Aggregate =
     let completeTaskIdDoesNotExists =
         Errors.TaskIdDoesNotExistsConflict
         |> DomainError.setOperation Operations.COMPLETE_TASK

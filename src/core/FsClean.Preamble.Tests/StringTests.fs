@@ -4,8 +4,8 @@ open System
 open Xunit
 open Swensen.Unquote
 open FsCheck.Xunit
-
 open FsClean
+
 
 [<Theory>]
 [<InlineData(null, true)>]
@@ -215,8 +215,8 @@ let ``trimEndOrEmpty should work`` (value: string, expected: string) =
 
 
 
-open FsClean.String.Patterns
 open System.Text.RegularExpressions
+open FsClean.String.Patterns
 
 [<Theory>]
 [<InlineData(null, true)>]

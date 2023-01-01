@@ -6,7 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="UseCases\AggregateUseCase.fs" />
+        <Compile Include="UseCases\Aggregate.fs" />
     </ItemGroup>
 
     <ItemGroup>

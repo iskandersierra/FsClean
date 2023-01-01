@@ -6,6 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="IdGenerator.fs" />
+    <Compile Include="Clock.fs" />
     <Compile Include="Serialization.fs" />
     <Compile Include="KeyValueStorage.fs" />
     <Compile Include="EventSourcing.fs" />

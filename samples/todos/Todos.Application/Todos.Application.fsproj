@@ -6,11 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="TodoList\TodoListAggregateController.fs" />
+    <Compile Include="TodoList\CommandControllers.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\core\FsClean.Application\FsClean.Application.fsproj" />
+    <ProjectReference Include="..\Todos.Business\Todos.Business.fsproj" />
   </ItemGroup>
 
 </Project>

@@ -5,10 +5,10 @@ open Xunit
 open Swensen.Unquote
 open FsCheck
 open FsCheck.Xunit
-open Validus
-
 open FsClean.Domain
 open FsClean.Domain.ValueTypesTests
+open Validus
+
 open Todos.Domain.TodoList
 
 

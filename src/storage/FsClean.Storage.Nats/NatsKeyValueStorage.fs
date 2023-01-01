@@ -1,11 +1,10 @@
 ﻿module FsClean.Storage.Nats.NatsKeyValueStorage
 
+open FsClean
+open FsClean.Application.KeyValueStorage
 open NATS.Client
 open NATS.Client.JetStream
 open NATS.Client.KeyValue
-
-open FsClean
-open FsClean.Application.KeyValueStorage
 
 type Options =
     { conn: IConnection

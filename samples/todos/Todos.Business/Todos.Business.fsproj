@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="TodoList\TodoListAggregateUseCase.fs" />
+    <Compile Include="TodoList\Aggregate.fs" />
   </ItemGroup>
 
   <ItemGroup>
