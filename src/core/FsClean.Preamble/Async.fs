@@ -10,3 +10,9 @@ let map fn m =
 
 let toTask (m: Async<'a>) : Task<'a> =
     task { return! m }
+
+let startAsTask (m: Async<'a>) : Task<'a> =
+    Async.StartAsTask(m)
+
+let startAsVoidTask (m: Async<_>) : Task =
+    startAsTask m :> Task

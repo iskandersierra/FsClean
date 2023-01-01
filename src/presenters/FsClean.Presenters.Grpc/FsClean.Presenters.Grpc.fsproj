@@ -7,17 +7,18 @@
 
     <ItemGroup>
         <Protobuf Include="Protos\DomainError.proto" GrpcServices="Both" Link="Protos\DomainError.proto" />
+        <None Include="Protos\DomainError.proto" CopyToOutputDirectory="Always" />
+    </ItemGroup>
+
+    <ItemGroup>
         <Compile Include="Extensions.fs" />
+        <Compile Include="GrpcApi.fs" />
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="FsToolkit.ErrorHandling" Version="4.2.1" />
         <PackageReference Include="Grpc-FSharp.AspNetCore" Version="0.2.0" />
         <PackageReference Include="Protobuf.FSharp" Version="0.2.0" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <Compile Include="GrpcApi.fs" />
     </ItemGroup>
 
     <ItemGroup>

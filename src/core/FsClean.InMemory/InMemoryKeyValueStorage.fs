@@ -81,50 +81,49 @@ let createWithComparer comparer pairs =
 
             loop ())
 
-    let save ct key value =
-        mailbox.PostAndAsyncReply(fun reply -> SaveOp(ct, key, value, reply))
-        |> Async.toTask
-        :> Task
+    { save =
+        fun ct key value ->
+            mailbox.PostAndAsyncReply(fun reply -> SaveOp(ct, key, value, reply))
+            |> Async.toTask
+            :> Task
 
-    let remove ct key =
-        mailbox.PostAndAsyncReply(fun reply -> RemoveOp(ct, key, reply))
-        |> Async.toTask
-        :> Task
+      remove =
+          fun ct key ->
+              mailbox.PostAndAsyncReply(fun reply -> RemoveOp(ct, key, reply))
+              |> Async.toTask
+              :> Task
 
-    let tryLoad ct key =
-        mailbox.PostAndAsyncReply(fun reply -> TryLoadOp(ct, key, reply))
-        |> Async.toTask
+      tryLoad =
+          fun ct key ->
+              mailbox.PostAndAsyncReply(fun reply -> TryLoadOp(ct, key, reply))
+              |> Async.toTask
 
-    let tryLoadMany ct keys =
-        mailbox.PostAndAsyncReply(fun reply -> TryLoadManyOp(ct, Seq.toArray keys, reply))
-        |> Async.toTask
+      tryLoadMany =
+          fun ct keys ->
+              mailbox.PostAndAsyncReply(fun reply -> TryLoadManyOp(ct, Seq.toArray keys, reply))
+              |> Async.toTask
 
-    let tryLoadFirst ct keys =
-        mailbox.PostAndAsyncReply(fun reply -> TryLoadFirstOp(ct, Seq.toArray keys, reply))
-        |> Async.toTask
+      tryLoadFirst =
+          fun ct keys ->
+              mailbox.PostAndAsyncReply(fun reply -> TryLoadFirstOp(ct, Seq.toArray keys, reply))
+              |> Async.toTask },
 
-    let dump () =
-        mailbox.PostAndAsyncReply(fun reply -> DumpOp(reply))
-        |> Async.toTask
+    { dump =
+        fun () ->
+            mailbox.PostAndAsyncReply(fun reply -> DumpOp(reply))
+            |> Async.toTask
 
-    let reset pairs =
-        mailbox.PostAndAsyncReply(fun reply -> ResetOp(Array.ofSeq pairs, reply))
-        |> Async.toTask
-        :> Task
+      reset =
+          fun pairs ->
+              mailbox.PostAndAsyncReply(fun reply -> ResetOp(Array.ofSeq pairs, reply))
+              |> Async.toTask
+              :> Task
 
-    let clear () =
-        mailbox.PostAndAsyncReply(fun reply -> ResetOp(Array.empty, reply))
-        |> Async.toTask
-        :> Task
-
-    { save = save
-      remove = remove
-      tryLoad = tryLoad
-      tryLoadMany = tryLoadMany
-      tryLoadFirst = tryLoadFirst },
-    { dump = dump
-      reset = reset
-      clear = clear }
+      clear =
+          fun () ->
+              mailbox.PostAndAsyncReply(fun reply -> ResetOp(Array.empty, reply))
+              |> Async.toTask
+              :> Task }
 
 let create pairs =
     createWithComparer EqualityComparer.defaultOf<'key> pairs
