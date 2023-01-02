@@ -62,7 +62,7 @@ type TodoListRestController(commands: CommandControllers.Stateless.Controller, i
         |> RestApi.ActionResult.toOk
 
     [<HttpPost("add-task", Name = "TodoList_AddTask")>]
-    [<SwaggerResponse(200, "Add task completed", typeof<State>)>]
+    [<SwaggerResponse(200, "Add task completed", typeof<TodoListCommandResponseBody>)>]
     [<SwaggerResponse(400, "Validation errors", typeof<ValidationProblemDetails>)>]
     [<SwaggerResponse(401, "Unauthorized", typeof<ProblemDetails>)>]
     [<SwaggerResponse(404, "Entity not found", typeof<ProblemDetails>)>]

@@ -31,6 +31,7 @@
     <ProjectReference Include="..\..\..\src\presenters\FsClean.Presenters.Grpc\FsClean.Presenters.Grpc.fsproj" />
     <ProjectReference Include="..\..\..\src\presenters\FsClean.Presenters.Rest\FsClean.Presenters.Rest.fsproj" />
     <ProjectReference Include="..\Todos.Application\Todos.Application.fsproj" />
+    <ProjectReference Include="..\Todos.Infra\Todos.Infra.fsproj" />
   </ItemGroup>
 
 </Project>

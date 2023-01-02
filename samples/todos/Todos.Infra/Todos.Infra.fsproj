@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="TodoList\Services.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\core\FsClean.InMemory\FsClean.InMemory.fsproj" />
+    <ProjectReference Include="..\Todos.Application\Todos.Application.fsproj" />
+  </ItemGroup>
+
+</Project>
