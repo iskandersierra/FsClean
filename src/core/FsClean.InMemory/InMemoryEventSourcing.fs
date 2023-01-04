@@ -11,7 +11,10 @@ open FsClean
 open FsClean.Application.EventSourcing
 
 type InMemoryEventStore<'event> =
-    { dump: unit -> Task<PersistedEventEnvelope<'event> []>
+    { append: EventStoreAppend<'event>
+      getReader: EventStoreGetReader<'event>
+
+      dump: unit -> Task<PersistedEventEnvelope<'event> []>
       clear: unit -> Task
       reset: PersistedEventEnvelope<'event> seq -> Task
       dispose: unit -> unit }
@@ -206,9 +209,9 @@ let create (events: PersistedEventEnvelope<'event> seq) =
             }
             |> Async.toTask
 
-      getReader = fun ct parameters -> task { return notImplemented () } },
-
-    { dump =
+      getReader = fun ct parameters -> task { return notImplemented () }
+      
+      dump =
         fun () ->
             inbox.PostAndAsyncReply(fun reply -> DumpOp(reply))
             |> Async.toTask

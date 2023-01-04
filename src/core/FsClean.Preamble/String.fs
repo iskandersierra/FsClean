@@ -2,6 +2,7 @@
 module FsClean.String
 
 open System
+open System.Text
 open System.Text.RegularExpressions
 
 let isNullOrEmpty (value: string) = String.IsNullOrEmpty value
@@ -51,6 +52,14 @@ let trimEndOrEmpty (str: string) =
     match str with
     | null -> ""
     | _ -> trimEnd str
+
+// Encoding
+
+let toEncodingBytes (encoding: Encoding) (str: string) = encoding.GetBytes str
+let ofEncodingBytes (encoding: Encoding) (bytes: byte []) = encoding.GetString bytes
+
+let toUtf8 = toEncodingBytes Encoding.UTF8
+let ofUtf8 = ofEncodingBytes Encoding.UTF8
 
 module Patterns =
     let private ofCondition predicate =

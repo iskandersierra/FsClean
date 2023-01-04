@@ -8,7 +8,11 @@ open FsClean
 open FsClean.Application.KeyValueStorage
 
 type InMemoryKeyValueStore<'key, 'value> =
-    { dump: unit -> Task<IDictionary<'key, 'value>>
+    { save: SaveKeyValue<'key, 'value>
+      remove: RemoveKeyValue<'key>
+      tryLoad: TryLoadKeyValue<'key, 'value>
+
+      dump: unit -> Task<IDictionary<'key, 'value>>
       clear: unit -> Task
       reset: ('key * 'value) seq -> Task }
 
@@ -16,8 +20,6 @@ type internal InMemoryOperation<'key, 'value> =
     | SaveOp of CancellationToken * 'key * 'value * AsyncReplyChannel<unit>
     | RemoveOp of CancellationToken * 'key * AsyncReplyChannel<unit>
     | TryLoadOp of CancellationToken * 'key * AsyncReplyChannel<'value option>
-    | TryLoadManyOp of CancellationToken * 'key array * AsyncReplyChannel<('key * 'value) array>
-    | TryLoadFirstOp of CancellationToken * 'key array * AsyncReplyChannel<('key * 'value) option>
     | DumpOp of AsyncReplyChannel<IDictionary<'key, 'value>>
     | ResetOp of ('key * 'value) array * AsyncReplyChannel<unit>
 
@@ -43,28 +45,6 @@ let createWithComparer comparer pairs =
                         match data.TryGetValue key with
                         | true, value -> reply.Reply(Some value)
                         | false, _ -> reply.Reply None
-
-                    | TryLoadManyOp (ct, keys, reply) ->
-                        let values =
-                            keys
-                            |> Seq.collect (fun key ->
-                                match data.TryGetValue key with
-                                | true, value -> [ key, value ]
-                                | false, _ -> [])
-                            |> Seq.toArray
-
-                        reply.Reply values
-
-                    | TryLoadFirstOp (ct, keys, reply) ->
-                        let value =
-                            keys
-                            |> Seq.collect (fun key ->
-                                match data.TryGetValue key with
-                                | true, value -> [ key, value ]
-                                | false, _ -> [])
-                            |> Seq.tryHead
-
-                        reply.Reply value
 
                     | DumpOp reply -> reply.Reply(Dictionary<_, _>(data))
 
@@ -98,20 +78,10 @@ let createWithComparer comparer pairs =
               mailbox.PostAndAsyncReply(fun reply -> TryLoadOp(ct, key, reply))
               |> Async.toTask
 
-      tryLoadMany =
-          fun ct keys ->
-              mailbox.PostAndAsyncReply(fun reply -> TryLoadManyOp(ct, Seq.toArray keys, reply))
+      dump =
+          fun () ->
+              mailbox.PostAndAsyncReply(fun reply -> DumpOp(reply))
               |> Async.toTask
-
-      tryLoadFirst =
-          fun ct keys ->
-              mailbox.PostAndAsyncReply(fun reply -> TryLoadFirstOp(ct, Seq.toArray keys, reply))
-              |> Async.toTask },
-
-    { dump =
-        fun () ->
-            mailbox.PostAndAsyncReply(fun reply -> DumpOp(reply))
-            |> Async.toTask
 
       reset =
           fun pairs ->

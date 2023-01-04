@@ -19,3 +19,8 @@ let tryFind key (source: #IDictionary<_, _>) =
     match source.TryGetValue(key) with
     | true, value -> Some value
     | false, _ -> None
+
+let find key (source: #IDictionary<_, _>) =
+    match source.TryGetValue(key) with
+    | true, value -> value
+    | false, _ -> raise (KeyNotFoundException(sprintf "Key %A not found" key))

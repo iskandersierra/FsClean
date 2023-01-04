@@ -6,6 +6,11 @@ open NATS.Client
 open NATS.Client.JetStream
 open NATS.Client.KeyValue
 
+type InMemoryKeyValueStore<'key, 'value> =
+    { save: SaveKeyValue<'key, 'value>
+      remove: RemoveKeyValue<'key>
+      tryLoad: TryLoadKeyValue<'key, 'value> }
+
 type Options =
     { conn: IConnection
       bucketName: string
@@ -57,8 +62,4 @@ let create options =
                       return Some entry.Value
                   with
                   | :? NATSJetStreamException as exn when exn.ErrorCode = 404 -> return None
-              }
-
-      tryLoadMany = fun ct keys -> task { return tryLoadManyInternal keys |> Seq.toArray }
-
-      tryLoadFirst = fun ct keys -> task { return tryLoadManyInternal keys |> Seq.tryHead } }
+              } }

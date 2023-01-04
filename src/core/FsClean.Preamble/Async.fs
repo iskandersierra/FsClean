@@ -6,13 +6,18 @@ open System.Threading.Tasks
 let map fn m =
     async {
         let! x = m
-        return fn x }
+        return fn x
+    }
 
-let toTask (m: Async<'a>) : Task<'a> =
-    task { return! m }
+let bind fn m =
+    async {
+        let! x = m
+        return! fn x
+    }
 
-let startAsTask (m: Async<'a>) : Task<'a> =
-    Async.StartAsTask(m)
+let toTask (m: Async<'a>) : Task<'a> = task { return! m }
+let ofTask (m: Task<'a>) : Async<'a> = Async.AwaitTask m
 
-let startAsVoidTask (m: Async<_>) : Task =
-    startAsTask m :> Task
+let startAsTask (m: Async<'a>) : Task<'a> = Async.StartAsTask(m)
+
+let startAsVoidTask (m: Async<_>) : Task = startAsTask m :> Task

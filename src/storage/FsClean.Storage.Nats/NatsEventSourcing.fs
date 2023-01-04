@@ -2,11 +2,18 @@
 
 open System
 open System.Globalization
+open System.Threading.Tasks
 
 open FsClean
 open FsClean.Application.EventSourcing
 open NATS.Client
 open NATS.Client.JetStream
+
+type PayloadType = byte []
+
+type NatsJetStreamEventStore =
+    { append: EventStoreAppend<PayloadType>
+      getReader: EventStoreGetReader<PayloadType> }
 
 type Options =
     { conn: IConnection
@@ -37,8 +44,6 @@ let initialize =
     StreamConfiguration.Builder().Build()
     |> initializeWithConfig
 
-type PayloadType = byte []
-
 [<Literal>]
 let DefaultBatchSize = 25
 
@@ -51,7 +56,7 @@ let MaxBatchSize = 100
 [<Literal>]
 let FetchTimeoutMilliseconds = 1000
 
-let create options : EventStore<PayloadType> =
+let create options : NatsJetStreamEventStore =
     let subjectFor = sprintf "%s.PK.%s.ETT.%s.ID.%s"
 
     let toEventSeq (seq: uint64) = seq.ToString("x16")

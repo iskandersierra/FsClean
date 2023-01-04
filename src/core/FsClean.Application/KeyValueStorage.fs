@@ -3,6 +3,8 @@
 open System.Threading
 open System.Threading.Tasks
 
+open FsClean
+
 type SaveKeyValue<'key, 'value> = CancellationToken -> 'key -> 'value -> Task
 
 type RemoveKeyValue<'key> = CancellationToken -> 'key -> Task
@@ -13,38 +15,65 @@ type TryLoadManyKeyValue<'key, 'value> = CancellationToken -> 'key seq -> Task<(
 
 type TryLoadFirstKeyValue<'key, 'value> = CancellationToken -> 'key seq -> Task<('key * 'value) option>
 
-type KeyValueStore<'key, 'value> =
-    { save: SaveKeyValue<'key, 'value>
-      remove: RemoveKeyValue<'key>
-      tryLoad: TryLoadKeyValue<'key, 'value>
-      tryLoadMany: TryLoadManyKeyValue<'key, 'value>
-      tryLoadFirst: TryLoadFirstKeyValue<'key, 'value> }
-
-type IKeyValueStorage<'key, 'value> =
-    abstract SaveAsync : key: 'key * value: 'value * cancellationToken: CancellationToken -> Task
-    abstract RemoveAsync : key: 'key * cancellationToken: CancellationToken -> Task
-    abstract TryLoadKeyAsync : key: 'key * cancellationToken: CancellationToken -> Task<'value option>
-    abstract TryLoadManyKeyValue : keys: 'key seq * cancellationToken: CancellationToken -> Task<('key * 'value) array>
-
-    abstract TryLoadFirstKeyValue :
-        keys: 'key seq * cancellationToken: CancellationToken -> Task<('key * 'value) option>
-
 module KeyValueStore =
-    let toInterface (store: KeyValueStore<'key, 'value>) =
-        { new IKeyValueStorage<'key, 'value> with
-            member __.SaveAsync(key, value, cancellationToken) = store.save cancellationToken key value
-            member __.RemoveAsync(key, cancellationToken) = store.remove cancellationToken key
-            member __.TryLoadKeyAsync(key, cancellationToken) = store.tryLoad cancellationToken key
+    open FsToolkit.ErrorHandling
+    
+    let tryLoadMany (tryLoad: TryLoadKeyValue<'key, 'value>) ct keys =
+        task {
+            let result = ResizeArray()
 
-            member __.TryLoadManyKeyValue(keys, cancellationToken) =
-                store.tryLoadMany cancellationToken keys
+            for key in keys do
+                let! value = tryLoad ct key
 
-            member __.TryLoadFirstKeyValue(keys, cancellationToken) =
-                store.tryLoadFirst cancellationToken keys }
+                match value with
+                | Some value -> result.Add(key, value)
+                | None -> ()
 
-    let ofInterface (store: IKeyValueStorage<'key, 'value>) =
-        { save = (fun cancellationToken key value -> store.SaveAsync(key, value, cancellationToken))
-          remove = (fun cancellationToken key -> store.RemoveAsync(key, cancellationToken))
-          tryLoad = (fun cancellationToken key -> store.TryLoadKeyAsync(key, cancellationToken))
-          tryLoadMany = (fun cancellationToken keys -> store.TryLoadManyKeyValue(keys, cancellationToken))
-          tryLoadFirst = (fun cancellationToken keys -> store.TryLoadFirstKeyValue(keys, cancellationToken)) }
+            return result.ToArray()
+        }
+
+    let tryLoadFirst (tryLoad: TryLoadKeyValue<'key, 'value>) ct keys =
+        let rec loop e =
+            task {
+                match Seq.moveNext e with
+                | true ->
+                    match! tryLoad ct (Seq.getCurrent e) with
+                    | Some value -> return Some(Seq.getCurrent e, value)
+                    | None -> return! loop e
+                | false -> return None
+            }
+
+        task {
+            use e = Seq.getEnumerator keys
+            return! loop e
+        }
+
+    let mapSave toInnerKey toInnerValue (save: SaveKeyValue<'innerKey, 'innerValue>) : SaveKeyValue<'outterKey, 'outterValue> =
+        fun ct key value -> save ct (toInnerKey key) (toInnerValue value)
+
+    let mapRemove toInnerKey (remove: RemoveKeyValue<'innerKey>) : RemoveKeyValue<'outterKey> =
+        fun ct key -> remove ct (toInnerKey key)
+
+    let mapTryLoad toInnerKey toOutterValue (tryLoad: TryLoadKeyValue<'innerKey, 'innerValue>) : TryLoadKeyValue<'outterKey, 'outterValue> =
+        fun ct key ->
+            taskOption {
+                let! value = tryLoad ct (toInnerKey key)
+                return toOutterValue value
+            }
+
+    let mapTryLoadMany (keyFn: DualFn<_, _>) toOutterValue (tryLoadMany: TryLoadManyKeyValue<'innerKey, 'innerValue>) : TryLoadManyKeyValue<'outterKey, 'outterValue> =
+        fun ct keys ->
+            task {
+                let innerKeys = keys |> Seq.map keyFn.forward
+                let! result = tryLoadMany ct innerKeys
+                let result = result |> Array.map (fun (k, v) -> keyFn.backward k, toOutterValue v)
+                return result
+            }
+
+    let mapTryLoadFirst (keyFn: DualFn<_, _>) toOutterValue (tryLoadFirst: TryLoadFirstKeyValue<'innerKey, 'innerValue>) : TryLoadFirstKeyValue<'outterKey, 'outterValue> =
+        fun ct keys ->
+            taskOption {
+                let innerKeys = keys |> Seq.map keyFn.forward
+                let! innerKey, innerValue = tryLoadFirst ct innerKeys
+                return keyFn.backward innerKey, toOutterValue innerValue
+            }

@@ -16,7 +16,7 @@ type TypeSchemaAttribute(schema) =
     override this.Schema = schema
 
 module TypeSchemaConverter =
-    let ofTypes (types: Type seq) : DualOptionFn<Type, String> =
+    let ofTypes (types: Type seq) : DualFn<Type, String> =
         types
         |> Seq.collect (fun t ->
             let attr =
@@ -26,4 +26,4 @@ module TypeSchemaConverter =
                 List.empty
             else
                 [ t, attr.Schema ])
-        |> DualOptionFn.ofPairsDict
+        |> DualFn.ofPairsDict

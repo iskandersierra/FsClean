@@ -3,6 +3,8 @@
 open System.Threading
 open System.Threading.Tasks
 
+open FsClean
+
 type PartitionId = string
 type EntityType = string
 type EntityIdentifier = string
@@ -44,7 +46,7 @@ type EventStoreReader<'event> =
       dispose: unit -> Task }
 
 and EventStoreReadResult<'event> =
-    { events: PersistedEventEnvelope<'event>[]
+    { events: PersistedEventEnvelope<'event> []
       isLastPage: bool }
 
 type EventStoreGetReader<'event> = CancellationToken -> EventStoreGetReader -> Task<EventStoreReader<'event>>
@@ -66,7 +68,7 @@ and EventStoreReadSubjects =
 and EventStoreReadEvents =
     | EventStoreReadAllEvents
     | EventStoreReadAfterGlobalSequence of EventSequence
-    //| EventStoreReadAfterInstanceSequence of EventSequence
+//| EventStoreReadAfterInstanceSequence of EventSequence
 
 [<RequireQualifiedAccess>]
 module EventStoreGetReader =
@@ -75,27 +77,52 @@ module EventStoreGetReader =
           events = EventStoreReadAllEvents
           batchSize = None }
 
-type EventStore<'event> =
-    { append: EventStoreAppend<'event>
-      getReader: EventStoreGetReader<'event> }
-
-// type IEventStore<'event> =
-//     abstract AppendAsync :
-//         parameters: EventStoreAppendParams<'event> * cancellationToken: CancellationToken ->
-//         Task<EventStoreAppendResult>
-
-//     abstract ReadAsync :
-//         parameters: EventStoreReadParams * cancellationToken: CancellationToken -> Task<EventStoreReadResult<'event>>
-
 module EventStore =
-    // let toInterface (store: EventStore<'event>) =
-    //     { new IEventStore<'event> with
-    //         member __.AppendAsync(parameters, cancellationToken) =
-    //             store.append cancellationToken parameters
+    let mapAppend toInnerEvent (append: EventStoreAppend<'innerEvent>) : EventStoreAppend<'outterEvent> =
+        fun ct outterParams ->
+            let innerParams =
+                { partitionId = outterParams.partitionId
+                  entityType = outterParams.entityType
+                  entityId = outterParams.entityId
+                  instanceSequence = outterParams.instanceSequence
+                  event =
+                    { eventId = outterParams.event.eventId
+                      meta = outterParams.event.meta
+                      event = toInnerEvent outterParams.event.event } }
 
-    //         member __.ReadAsync(parameters, cancellationToken) = store.read cancellationToken parameters }
+            append ct innerParams
 
-    // let ofInterface (store: IEventStore<'event>) =
-    //     { append = (fun cancellationToken parameters -> store.AppendAsync(parameters, cancellationToken))
-    //       read = (fun cancellationToken parameters -> store.ReadAsync(parameters, cancellationToken)) }
-    ()
+    let mapGetReader toOutterEvent (getReader: EventStoreGetReader<'innerEvent>) : EventStoreGetReader<'outterEvent> =
+        fun ct outterParams ->
+            task {
+                let innerParams =
+                    { subject = outterParams.subject
+                      events = outterParams.events
+                      batchSize = outterParams.batchSize }
+
+                let! innerReader = getReader ct innerParams
+
+                return
+                    { read =
+                        fun ct ->
+                            task {
+                                let! innerResult = innerReader.read ct
+
+                                let events =
+                                    innerResult.events
+                                    |> Array.map (fun innerEvent ->
+                                        { partitionId = innerEvent.partitionId
+                                          entityType = innerEvent.entityType
+                                          entityId = innerEvent.entityId
+                                          eventId = innerEvent.eventId
+                                          globalSequence = innerEvent.globalSequence
+                                          instanceSequence = innerEvent.instanceSequence
+                                          meta = innerEvent.meta
+                                          event = toOutterEvent innerEvent.event })
+
+                                return
+                                    { events = events
+                                      isLastPage = innerResult.isLastPage }
+                            }
+                      dispose = innerReader.dispose }
+            }

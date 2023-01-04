@@ -1,24 +1,22 @@
 ﻿[<RequireQualifiedAccess>]
 module FsClean.Seq
 
-let tryMaxWithCompareBy compare keySelector source =
-    use enumerator = (source: _ seq).GetEnumerator()
+open System.Collections.Generic
 
-    let rec loop current =
-        match enumerator.MoveNext() with
-        | false -> current |> Option.map snd
-        | true ->
-            match current with
-            | None -> loop (Some(keySelector enumerator.Current, enumerator.Current))
-            | Some (currentKey, _) ->
-                let key = keySelector enumerator.Current
+let getEnumerator (source: 'a seq) = source.GetEnumerator()
+let moveNext (enumerator: IEnumerator<'a>) = enumerator.MoveNext()
+let getCurrent (enumerator: IEnumerator<'a>) = enumerator.Current
 
-                if compare key currentKey > 0 then
-                    loop (Some(key, enumerator.Current))
-                else
-                    loop current
-
-    loop None
+let tryMaxWithCompareBy compare keySelector =
+    Seq.fold
+        (fun acc x ->
+            match acc with
+            | None -> Some x
+            | Some y ->
+                match compare (keySelector x) (keySelector y) with
+                | 1 -> Some x
+                | _ -> acc)
+        None
 
 let inline tryMaxWithCompare compare = tryMaxWithCompareBy compare id
 
@@ -38,3 +36,43 @@ let inline tryMinBy keySelector =
 
 let inline tryMin source =
     tryMinWithCompare Comparer.defaultOf source
+
+let scanCond fn acc source =
+    let rec loop e acc =
+        seq {
+            match moveNext e with
+            | true ->
+                let current = getCurrent e
+
+                match fn acc current with
+                | Continue -> yield! loop e acc
+                | ContinueWith acc ->
+                    yield acc
+                    yield! loop e acc
+                | Break -> ()
+                | BreakWith acc -> yield! acc
+            | false -> ()
+        }
+
+    seq {
+        use e = getEnumerator source
+        yield acc
+        yield! loop e acc
+    }
+
+
+let foldCond fn acc source =
+    let rec loop e acc =
+        match moveNext e with
+        | true ->
+            let current = getCurrent e
+
+            match fn acc current with
+            | Continue -> loop e acc
+            | ContinueWith acc -> loop e acc
+            | Break -> acc
+            | BreakWith acc -> acc
+        | false -> acc
+
+    use e = getEnumerator source
+    loop e acc
