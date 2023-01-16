@@ -1,5 +1,18 @@
 name: fsclean
 
 services:
+- name: jobs-webapi
+  project: support/jobs/FsClean.Support.Jobs.WebApi/FsClean.Support.Jobs.WebApi.fsproj
+  bindings:
+    - name: http
+      port: 9001
+      protocol: http
+      host: localhost
+
 - name: todos-webapi
   project: samples/todos/Todos.WebApi/Todos.WebApi.fsproj
+  bindings:
+    - name: http
+      port: 10001
+      protocol: http
+      host: localhost

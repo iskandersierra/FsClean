@@ -53,6 +53,44 @@ let trimEndOrEmpty (str: string) =
     | null -> ""
     | _ -> trimEnd str
 
+let startsWith prefix (value: string) = value.StartsWith(prefix: string)
+let startsWithChar prefix (value: string) = value.StartsWith(prefix: char)
+let startsWithComparison comparison prefix (value: string) = value.StartsWith(prefix, comparison)
+
+let startsWithCulture culture ignoreCase prefix (value: string) =
+    value.StartsWith(prefix, ignoreCase, culture)
+
+let endsWith prefix (value: string) = value.EndsWith(prefix: string)
+let endsWithChar prefix (value: string) = value.EndsWith(prefix: char)
+let endsWithComparison comparison prefix (value: string) = value.EndsWith(prefix, comparison)
+
+let endsWithCulture culture ignoreCase prefix (value: string) =
+    value.EndsWith(prefix, ignoreCase, culture)
+
+let withStarting prefix (value: string) =
+    if startsWith prefix value then
+        value
+    else
+        prefix + value
+
+let withStartingChar prefix (value: string) =
+    if startsWithChar prefix value then
+        value
+    else
+        string prefix + value
+
+let withEnding prefix (value: string) =
+    if endsWith prefix value then
+        value
+    else
+        prefix + value
+
+let withEndingChar prefix (value: string) =
+    if endsWithChar prefix value then
+        value
+    else
+        string prefix + value
+
 // Encoding
 
 let toEncodingBytes (encoding: Encoding) (str: string) = encoding.GetBytes str
@@ -62,31 +100,24 @@ let toUtf8 = toEncodingBytes Encoding.UTF8
 let ofUtf8 = ofEncodingBytes Encoding.UTF8
 
 module Patterns =
-    let private ofCondition predicate =
-        fun value ->
-            if predicate value then
-                Some value
-            else
-                None
+    let (|IsNullOrEmpty|_|) = asPattern isNullOrEmpty
+    let (|IsNullOrWhiteSpace|_|) = asPattern isNullOrWhiteSpace
 
-    let (|IsNullOrEmpty|_|) = ofCondition isNullOrEmpty
-    let (|IsNullOrWhiteSpace|_|) = ofCondition isNullOrWhiteSpace
-
-    let (|IsNotNullOrEmpty|_|) = ofCondition isNotNullOrEmpty
-    let (|IsNotNullOrWhiteSpace|_|) = ofCondition isNotNullOrWhiteSpace
+    let (|IsNotNullOrEmpty|_|) = asPattern isNotNullOrEmpty
+    let (|IsNotNullOrWhiteSpace|_|) = asPattern isNotNullOrWhiteSpace
 
     let (|HasLengthOutside|_|) minLength maxLength =
-        ofCondition (fun value ->
+        asPattern (fun value ->
             String.length value < minLength
             || String.length value > maxLength)
 
     let (|HasLengthBetween|_|) minLength maxLength =
-        ofCondition (fun value ->
+        asPattern (fun value ->
             String.length value >= minLength
             && String.length value <= maxLength)
 
     let (|HasLength|_|) length value =
-        ofCondition (String.length >> (=) length) value
+        asPattern (String.length >> (=) length) value
 
     let (|Match|_|) (regex: Regex) value =
         if isNull value then
@@ -219,3 +250,10 @@ module Patterns =
         function
         | MatchGroups (compiledRegex pattern) groupNames groups -> Some groups
         | _ -> None
+
+
+    let (|StartsWith|_|) prefix = asPattern (startsWith prefix)
+    let (|StartsWithChar|_|) prefix = asPattern (startsWithChar prefix)
+
+    let (|EndsWith|_|) prefix = asPattern (endsWith prefix)
+    let (|EndsWithChar|_|) prefix = asPattern (endsWithChar prefix)

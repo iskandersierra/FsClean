@@ -55,7 +55,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "storage", "storage", "{990E
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "FsClean.Storage.Nats", "src\storage\FsClean.Storage.Nats\FsClean.Storage.Nats.fsproj", "{B463C456-CC4F-405A-A01C-1D5AEBCDABBB}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Todos.Infra", "samples\todos\Todos.Infra\Todos.Infra.fsproj", "{F8DE22B6-319F-4B59-8F12-04D2AEE6521F}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Todos.Infra", "samples\todos\Todos.Infra\Todos.Infra.fsproj", "{F8DE22B6-319F-4B59-8F12-04D2AEE6521F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "support", "support", "{E7ED038C-9248-49F1-8245-9066D5A62EBB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "jobs", "jobs", "{067D0724-D734-4377-A219-CDA77BDC0981}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsClean.Support.Jobs.WebApi", "support\jobs\FsClean.Support.Jobs.WebApi\FsClean.Support.Jobs.WebApi.fsproj", "{CFB4F96A-228E-4EE3-9170-124C9E749086}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -147,6 +153,10 @@ Global
 		{F8DE22B6-319F-4B59-8F12-04D2AEE6521F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F8DE22B6-319F-4B59-8F12-04D2AEE6521F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F8DE22B6-319F-4B59-8F12-04D2AEE6521F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CFB4F96A-228E-4EE3-9170-124C9E749086}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFB4F96A-228E-4EE3-9170-124C9E749086}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFB4F96A-228E-4EE3-9170-124C9E749086}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFB4F96A-228E-4EE3-9170-124C9E749086}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -177,6 +187,8 @@ Global
 		{990E46CA-3074-4034-8F16-90A2E5184C6E} = {3E860F15-4A9C-4869-A34D-7AE7528E8AAF}
 		{B463C456-CC4F-405A-A01C-1D5AEBCDABBB} = {990E46CA-3074-4034-8F16-90A2E5184C6E}
 		{F8DE22B6-319F-4B59-8F12-04D2AEE6521F} = {8A2F3FEA-EB02-438F-A8ED-7CAA89BD49A6}
+		{067D0724-D734-4377-A219-CDA77BDC0981} = {E7ED038C-9248-49F1-8245-9066D5A62EBB}
+		{CFB4F96A-228E-4EE3-9170-124C9E749086} = {067D0724-D734-4377-A219-CDA77BDC0981}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A23C9EA8-A9F5-4911-B793-46567B4418F6}
