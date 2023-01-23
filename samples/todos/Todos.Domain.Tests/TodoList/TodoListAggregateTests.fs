@@ -3,11 +3,6 @@
 open System
 open Xunit
 open Swensen.Unquote
-open FsCheck
-open FsCheck.Xunit
-open FsClean.Domain
-open FsClean.Domain.ValueTypesTests
-open Validus
 
 open Todos.Domain.TodoList
 
@@ -15,7 +10,7 @@ open Todos.Domain.TodoList
 let ``TodoListAggregate.execute on AddTask should return events`` () =
     let command =
         AddTask
-            {| title = TaskTitle "title"
+            {| title = TaskTitle.ofValue "title"
                dueDate = None |}
 
     let state = { tasks = Map.empty }
@@ -23,11 +18,10 @@ let ``TodoListAggregate.execute on AddTask should return events`` () =
     let result = Aggregate.execute state command
 
     let expected =
-        TaskAdded
-            {| taskId = TaskId 1
-               title = TaskTitle "title"
-               dueDate = None |}
-        |> Some
+        [ TaskAdded
+              {| taskId = TaskId.ofValue 1
+                 title = TaskTitle.ofValue "title"
+                 dueDate = None |} ]
 
     test <@ result = Ok expected @>
 
@@ -35,20 +29,21 @@ let ``TodoListAggregate.execute on AddTask should return events`` () =
 let ``TodoListAggregate.execute on RemoveTask when task exists should return events`` () =
     let taskId = 1234
 
-    let command = RemoveTask {| taskId = TaskId taskId |}
+    let command =
+        RemoveTask {| taskId = TaskId.ofValue taskId |}
 
     let state =
         { tasks =
-            Map.ofSeq [ TaskId taskId,
-                        { taskId = TaskId taskId
-                          title = TaskTitle "title"
+            Map.ofSeq [ TaskId.ofValue taskId,
+                        { taskId = TaskId.ofValue taskId
+                          title = TaskTitle.ofValue "title"
                           dueDate = None
                           completed = false } ] }
 
     let result = Aggregate.execute state command
 
     let expected =
-        TaskRemoved {| taskId = TaskId taskId |} |> Some
+        [ TaskRemoved {| taskId = TaskId.ofValue taskId |} ]
 
     test <@ result = Ok expected @>
 
@@ -56,13 +51,14 @@ let ``TodoListAggregate.execute on RemoveTask when task exists should return eve
 let ``TodoListAggregate.execute on RemoveTask when task does not exist should return no events`` () =
     let taskId = 1234
 
-    let command = RemoveTask {| taskId = TaskId taskId |}
+    let command =
+        RemoveTask {| taskId = TaskId.ofValue taskId |}
 
     let state = { tasks = Map.empty }
 
     let result = Aggregate.execute state command
 
-    test <@ result = Ok None @>
+    test <@ result = Ok [] @>
 
 [<Fact>]
 let ``TodoListAggregate.execute on ClearAllTasks when tasks exist should return events`` () =
@@ -72,15 +68,15 @@ let ``TodoListAggregate.execute on ClearAllTasks when tasks exist should return 
 
     let state =
         { tasks =
-            Map.ofSeq [ TaskId taskId,
-                        { taskId = TaskId taskId
-                          title = TaskTitle "title"
+            Map.ofSeq [ TaskId.ofValue taskId,
+                        { taskId = TaskId.ofValue taskId
+                          title = TaskTitle.ofValue "title"
                           dueDate = None
                           completed = false } ] }
 
     let result = Aggregate.execute state command
 
-    let expected = AllTasksCleared |> Some
+    let expected = [ AllTasksCleared ]
 
     test <@ result = Ok expected @>
 
@@ -92,27 +88,27 @@ let ``TodoListAggregate.execute on ClearAllTasks when tasks do not exist should 
 
     let result = Aggregate.execute state command
 
-    test <@ result = Ok None @>
+    test <@ result = Ok [] @>
 
 [<Fact>]
 let ``TodoListAggregate.execute on CompleteTask when task exists should return events`` () =
     let taskId = 1234
 
     let command =
-        CompleteTask {| taskId = TaskId taskId |}
+        CompleteTask {| taskId = TaskId.ofValue taskId |}
 
     let state =
         { tasks =
-            Map.ofSeq [ TaskId taskId,
-                        { taskId = TaskId taskId
-                          title = TaskTitle "title"
+            Map.ofSeq [ TaskId.ofValue taskId,
+                        { taskId = TaskId.ofValue taskId
+                          title = TaskTitle.ofValue "title"
                           dueDate = None
                           completed = false } ] }
 
     let result = Aggregate.execute state command
 
     let expected =
-        TaskCompleted {| taskId = TaskId taskId |} |> Some
+        [ TaskCompleted {| taskId = TaskId.ofValue taskId |} ]
 
     test <@ result = Ok expected @>
 
@@ -121,33 +117,32 @@ let ``TodoListAggregate.execute on CompleteTask when task is already completed s
     let taskId = 1234
 
     let command =
-        CompleteTask {| taskId = TaskId taskId |}
+        CompleteTask {| taskId = TaskId.ofValue taskId |}
 
     let state =
         { tasks =
-            Map.ofSeq [ TaskId taskId,
-                        { taskId = TaskId taskId
-                          title = TaskTitle "title"
+            Map.ofSeq [ TaskId.ofValue taskId,
+                        { taskId = TaskId.ofValue taskId
+                          title = TaskTitle.ofValue "title"
                           dueDate = None
                           completed = true } ] }
 
     let result = Aggregate.execute state command
 
-    test <@ result = Ok None @>
+    test <@ result = Ok [] @>
 
 [<Fact>]
 let ``TodoListAggregate.execute on CompleteTask when task does not exist should return error`` () =
     let taskId = 1234
 
     let command =
-        CompleteTask {| taskId = TaskId taskId |}
+        CompleteTask {| taskId = TaskId.ofValue taskId |}
 
     let state = { tasks = Map.empty }
 
     let result = Aggregate.execute state command
 
-    let expected =
-        Aggregate.completeTaskIdDoesNotExists
+    let expected = Aggregate.completeTaskIdDoesNotExists
 
     test <@ result = Error expected @>
 
@@ -159,24 +154,23 @@ let ``TodoListAggregate.execute on PostponeTask when task exists should return e
 
     let command =
         PostponeTask
-            {| taskId = TaskId taskId
-               dueDate = TaskDueDate newDate |}
+            {| taskId = TaskId.ofValue taskId
+               dueDate = TaskDueDate.ofValue newDate |}
 
     let state =
         { tasks =
-            Map.ofSeq [ TaskId taskId,
-                        { taskId = TaskId taskId
-                          title = TaskTitle "title"
+            Map.ofSeq [ TaskId.ofValue taskId,
+                        { taskId = TaskId.ofValue taskId
+                          title = TaskTitle.ofValue "title"
                           dueDate = None
                           completed = false } ] }
 
     let result = Aggregate.execute state command
 
     let expected =
-        TaskPostponed
-            {| taskId = TaskId taskId
-               dueDate = TaskDueDate newDate |}
-        |> Some
+        [ TaskPostponed
+              {| taskId = TaskId.ofValue taskId
+                 dueDate = TaskDueDate.ofValue newDate |} ]
 
     test <@ result = Ok expected @>
 
@@ -188,20 +182,20 @@ let ``TodoListAggregate.execute on PostponeTask when dueDate is the same should 
 
     let command =
         PostponeTask
-            {| taskId = TaskId taskId
-               dueDate = TaskDueDate newDate |}
+            {| taskId = TaskId.ofValue taskId
+               dueDate = TaskDueDate.ofValue newDate |}
 
     let state =
         { tasks =
-            Map.ofSeq [ TaskId taskId,
-                        { taskId = TaskId taskId
-                          title = TaskTitle "title"
-                          dueDate = Some(TaskDueDate newDate)
+            Map.ofSeq [ TaskId.ofValue taskId,
+                        { taskId = TaskId.ofValue taskId
+                          title = TaskTitle.ofValue "title"
+                          dueDate = Some(TaskDueDate.ofValue newDate)
                           completed = false } ] }
 
     let result = Aggregate.execute state command
 
-    test <@ result = Ok None @>
+    test <@ result = Ok [] @>
 
 [<Fact>]
 let ``TodoListAggregate.execute on PostponeTask when task is already completed should return no events`` () =
@@ -211,20 +205,20 @@ let ``TodoListAggregate.execute on PostponeTask when task is already completed s
 
     let command =
         PostponeTask
-            {| taskId = TaskId taskId
-               dueDate = TaskDueDate newDate |}
+            {| taskId = TaskId.ofValue taskId
+               dueDate = TaskDueDate.ofValue newDate |}
 
     let state =
         { tasks =
-            Map.ofSeq [ TaskId taskId,
-                        { taskId = TaskId taskId
-                          title = TaskTitle "title"
+            Map.ofSeq [ TaskId.ofValue taskId,
+                        { taskId = TaskId.ofValue taskId
+                          title = TaskTitle.ofValue "title"
                           dueDate = None
                           completed = true } ] }
 
     let result = Aggregate.execute state command
 
-    test <@ result = Ok None @>
+    test <@ result = Ok [] @>
 
 [<Fact>]
 let ``TodoListAggregate.execute on PostponeTask when task does not exist should return error`` () =
@@ -234,15 +228,14 @@ let ``TodoListAggregate.execute on PostponeTask when task does not exist should 
 
     let command =
         PostponeTask
-            {| taskId = TaskId taskId
-               dueDate = TaskDueDate newDate |}
+            {| taskId = TaskId.ofValue taskId
+               dueDate = TaskDueDate.ofValue newDate |}
 
     let state = { tasks = Map.empty }
 
     let result = Aggregate.execute state command
 
-    let expected =
-        Aggregate.postponeTaskIdDoesNotExists
+    let expected = Aggregate.postponeTaskIdDoesNotExists
 
     test <@ result = Error expected @>
 
@@ -251,20 +244,20 @@ let ``TodoListAggregate.execute on KeepTaskOpen when task exists should return e
     let taskId = 1234
 
     let command =
-        KeepTaskOpen {| taskId = TaskId taskId |}
+        KeepTaskOpen {| taskId = TaskId.ofValue taskId |}
 
     let state =
         { tasks =
-            Map.ofSeq [ TaskId taskId,
-                        { taskId = TaskId taskId
-                          title = TaskTitle "title"
-                          dueDate = Some(TaskDueDate(DateTime.Now.AddDays 1.0))
+            Map.ofSeq [ TaskId.ofValue taskId,
+                        { taskId = TaskId.ofValue taskId
+                          title = TaskTitle.ofValue "title"
+                          dueDate = Some(TaskDueDate.ofValue (DateTime.Now.AddDays 1.0))
                           completed = false } ] }
 
     let result = Aggregate.execute state command
 
     let expected =
-        TaskKeptOpen {| taskId = TaskId taskId |} |> Some
+        [ TaskKeptOpen {| taskId = TaskId.ofValue taskId |} ]
 
     test <@ result = Ok expected @>
 
@@ -273,32 +266,31 @@ let ``TodoListAggregate.execute on KeepTaskOpen when task is already completed s
     let taskId = 1234
 
     let command =
-        KeepTaskOpen {| taskId = TaskId taskId |}
+        KeepTaskOpen {| taskId = TaskId.ofValue taskId |}
 
     let state =
         { tasks =
-            Map.ofSeq [ TaskId taskId,
-                        { taskId = TaskId taskId
-                          title = TaskTitle "title"
-                          dueDate = Some(TaskDueDate(DateTime.Now.AddDays 1.0))
+            Map.ofSeq [ TaskId.ofValue taskId,
+                        { taskId = TaskId.ofValue taskId
+                          title = TaskTitle.ofValue "title"
+                          dueDate = Some(TaskDueDate.ofValue (DateTime.Now.AddDays 1.0))
                           completed = true } ] }
 
     let result = Aggregate.execute state command
 
-    test <@ result = Ok None @>
+    test <@ result = Ok [] @>
 
 [<Fact>]
 let ``TodoListAggregate.execute on KeepTaskOpen when task does not exist should return error`` () =
     let taskId = 1234
 
     let command =
-        KeepTaskOpen {| taskId = TaskId taskId |}
+        KeepTaskOpen {| taskId = TaskId.ofValue taskId |}
 
     let state = { tasks = Map.empty }
 
     let result = Aggregate.execute state command
 
-    let expected =
-        Aggregate.keepTaskOpenIdDoesNotExists
+    let expected = Aggregate.keepTaskOpenIdDoesNotExists
 
     test <@ result = Error expected @>

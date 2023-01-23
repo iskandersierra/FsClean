@@ -71,18 +71,18 @@ module State =
             |> Map.toList
             |> List.map snd
             |> List.map (fun task ->
-                { taskId = task.taskId |> TaskId.value
-                  title = task.title |> TaskTitle.value
-                  dueDate = task.dueDate |> Option.map TaskDueDate.value
+                { taskId = TaskId.toValue task.taskId
+                  title = TaskTitle.toValue task.title
+                  dueDate = task.dueDate |> Option.map TaskDueDate.toValue
                   completed = task.completed }) }
 
     let ofDto (dto: Dto) : State =
-        { State.tasks =
+        { tasks =
             dto.tasks
             |> List.map (fun task ->
-                TaskId(task.taskId),
-                { TaskState.taskId = TaskId(task.taskId)
-                  title = TaskTitle(task.title)
-                  dueDate = task.dueDate |> Option.map TaskDueDate
+                TaskId.ofValue task.taskId,
+                { TaskState.taskId = TaskId.ofValue task.taskId
+                  title = TaskTitle.ofValue task.title
+                  dueDate = task.dueDate |> Option.map TaskDueDate.ofValue
                   completed = task.completed })
             |> Map.ofList }

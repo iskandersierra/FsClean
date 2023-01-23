@@ -1,5 +1,6 @@
 ﻿namespace FsClean.Domain
 
+open FsToolkit.ErrorHandling
 open Validus
 
 type DomainError =
@@ -25,6 +26,8 @@ and ConflictErrorData = Map<string, string list>
 
 type DomainResult<'t> = Result<'t, DomainError>
 type DomainResult = DomainResult<unit>
+type AsyncDomainResult<'t> = Async<DomainResult<'t>>
+type AsyncDomainResult = Async<DomainResult>
 
 [<RequireQualifiedAccess>]
 module DomainError =

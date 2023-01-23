@@ -2,11 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="TodoList\Services.fs" />
+    <Compile Include="TodoList\Serialization.fs" />
   </ItemGroup>
 
   <ItemGroup>

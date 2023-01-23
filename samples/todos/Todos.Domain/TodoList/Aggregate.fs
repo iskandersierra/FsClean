@@ -16,59 +16,54 @@ module Aggregate =
         Errors.TaskIdDoesNotExistsConflict
         |> DomainError.setOperation Operations.KEEP_TASK_OPEN
 
-    let execute state =
-        let ok = Some >> Ok
-        let none = Ok None
+    let internal taskIdOne = TaskId.ofValue 1
+    let internal nothing: DomainResult<Event list> = Ok []
 
-        function
+    let execute state command =
+        match command with
         | AddTask command ->
             let taskId =
                 state.tasks.Keys
                 |> Seq.tryMax
                 |> function
-                    | Some taskId -> TaskId.value taskId + 1 |> TaskId
-                    | None -> 1 |> TaskId
+                    | Some taskId -> taskId + taskIdOne
+                    | None -> taskIdOne
 
-            TaskAdded
-                {| taskId = taskId
-                   title = command.title
-                   dueDate = command.dueDate |}
-            |> ok
+            Ok [ TaskAdded {| taskId = taskId; title = command.title; dueDate = command.dueDate |} ]
 
         | RemoveTask command ->
             match state.tasks |> Map.tryFind command.taskId with
-            | Some _ -> TaskRemoved {| taskId = command.taskId |} |> ok
-            | None -> none
+            | Some _ -> Ok [ TaskRemoved {| taskId = command.taskId |} ]
+            | None -> nothing
 
         | ClearAllTasks ->
             match state.tasks |> Map.isEmpty with
-            | true -> none
-            | false -> AllTasksCleared |> ok
+            | true -> nothing
+            | false -> Ok [ AllTasksCleared ]
 
         | CompleteTask command ->
             match state.tasks |> Map.tryFind command.taskId with
-            | Some task when not task.completed -> TaskCompleted {| taskId = command.taskId |} |> ok
-            | Some _ -> none
-            | None -> completeTaskIdDoesNotExists |> Error
+            | Some task when not task.completed -> Ok [ TaskCompleted {| taskId = command.taskId |} ]
+            | Some _ -> nothing
+            | None -> Error completeTaskIdDoesNotExists
 
         | PostponeTask command ->
             match state.tasks |> Map.tryFind command.taskId with
             | Some task when not task.completed ->
                 if task.dueDate = Some command.dueDate then
-                    none
+                    nothing
                 else
-                    TaskPostponed
-                        {| taskId = command.taskId
-                           dueDate = command.dueDate |}
-                    |> ok
-            | Some _ -> none
-            | None -> postponeTaskIdDoesNotExists |> Error
+                    Ok [ TaskPostponed
+                             {| taskId = command.taskId
+                                dueDate = command.dueDate |} ]
+            | Some _ -> nothing
+            | None -> Error postponeTaskIdDoesNotExists
 
         | KeepTaskOpen command ->
             match state.tasks |> Map.tryFind command.taskId with
             | Some task ->
                 if task.completed || task.dueDate = None then
-                    none
+                    nothing
                 else
-                    TaskKeptOpen {| taskId = command.taskId |} |> ok
-            | None -> keepTaskOpenIdDoesNotExists |> Error
+                    Ok [ TaskKeptOpen {| taskId = command.taskId |} ]
+            | None -> Error keepTaskOpenIdDoesNotExists

@@ -2,7 +2,6 @@
 
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
-        <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
 
     <ItemGroup>
@@ -11,6 +10,8 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="FSharp.UMX" Version="1.1.0" />
+        <PackageReference Include="FsToolkit.ErrorHandling" Version="4.2.1" />
         <PackageReference Include="Validus" Version="4.1.0" />
     </ItemGroup>
 

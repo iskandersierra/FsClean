@@ -47,12 +47,12 @@ let ``Command.createCompleteTask should validate the command`` dto =
     test <@ result = expected @>
 
 [<Property>]
-let ``Command.createPostponeTask should validate the command`` dto =
-    let result = Command.createPostponeTask dto
+let ``Command.createPostponeTask should validate the command`` now dto =
+    let result = Command.createPostponeTask now dto
     let expected =
         validate {
             let! taskId = TaskId.create dto.taskId
-            and! dueDate = TaskDueDate.create dto.dueDate
+            and! dueDate = TaskDueDate.createWithNow now dto.dueDate
 
             return PostponeTask {| taskId = taskId; dueDate = dueDate |}
         }

@@ -1,25 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="IdGenerator.fs" />
-    <Compile Include="Clock.fs" />
-    <Compile Include="Serialization.fs" />
-    <Compile Include="KeyValueStorage.fs" />
-    <Compile Include="EventSourcing.fs" />
-    <Compile Include="AggregateController.fs" />
-  </ItemGroup>
+    <ItemGroup>
+        <Compile Include="IdGenerator.fs" />
+        <Compile Include="Clock.fs" />
+        <Compile Include="Serialization.fs" />
+        <Compile Include="KeyValueStorage\KeyValueStore.fs" />
+        <Compile Include="EventSourcing\EventSourcing.fs" />
+        <Compile Include="UseCases\UseCase.fs" />
+        <Compile Include="UseCases\AggregateUseCases.fs" />
+        <Compile Include="AggregateController.fs" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="FSharp.Control.AsyncSeq" Version="3.2.1" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="FSharp.Control.AsyncSeq" Version="3.2.1" />
+        <PackageReference Include="FsToolkit.ErrorHandling.TaskResult" Version="4.2.1" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\FsClean.Business\FsClean.Business.fsproj" />
-  </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\FsClean.Domain\FsClean.Domain.fsproj" />
+    </ItemGroup>
 
 </Project>

@@ -53,10 +53,10 @@ module Command =
             return CompleteTask {| taskId = taskId |}
         }
 
-    let createPostponeTask (dto: PostponeTaskDto) =
+    let createPostponeTask now (dto: PostponeTaskDto) =
         validate {
             let! taskId = TaskId.create dto.taskId
-            and! dueDate = TaskDueDate.create dto.dueDate
+            and! dueDate = TaskDueDate.createWithNow now dto.dueDate
             return PostponeTask {| taskId = taskId; dueDate = dueDate |}
         }
 

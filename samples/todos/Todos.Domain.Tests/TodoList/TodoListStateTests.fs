@@ -51,7 +51,7 @@ let ``State.apply AllTasksCleared should return a state with empty tasks`` state
 [<Property>]
 let ``State.apply TaskCompleted on non-existing task should return same state`` state =
     let state' =
-        State.apply state (TaskCompleted {| taskId = TaskId(1234) |})
+        State.apply state (TaskCompleted {| taskId = TaskId.ofValue 1234 |})
 
     test <@ state' = state @>
 
@@ -72,7 +72,7 @@ let ``State.apply TaskPostponed on non-existing task should return same state`` 
         State.apply
             state
             (TaskPostponed
-                {| taskId = TaskId(1234)
+                {| taskId = TaskId.ofValue 1234
                    dueDate = dueDate |})
 
     test <@ state' = state @>
@@ -96,7 +96,7 @@ let ``State.apply TaskKeptOpen on non-existing task should return same state`` s
     let state' =
         State.apply
             state
-            (TaskKeptOpen {| taskId = TaskId(1234) |})
+            (TaskKeptOpen {| taskId = TaskId.ofValue 1234 |})
 
     test <@ state' = state @>
 
